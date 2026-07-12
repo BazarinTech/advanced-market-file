@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -25,7 +26,7 @@ class DashboardController extends Controller
             ->distinct('email')
             ->count('email');
 
-        return view('admin.dashboard', compact(
+        return Inertia::render('Admin/Dashboard', compact(
             'totalDeps', 'totalWith', 'totalBals',
             'totalUsers', 'active', 'inactive', 'joinedToday',
             'usersDeposited'

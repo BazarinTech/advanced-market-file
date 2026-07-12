@@ -7,6 +7,7 @@ use App\Services\PalplussService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class DepositController extends Controller
 {
@@ -14,10 +15,7 @@ class DepositController extends Controller
 
     public function show()
     {
-        return view('dashboard.deposit', [
-            'user'     => Auth::user(),
-            'earnings' => Auth::user()->earnings,
-        ]);
+        return Inertia::render('Dashboard/Deposit');
     }
 
     public function store(Request $request)

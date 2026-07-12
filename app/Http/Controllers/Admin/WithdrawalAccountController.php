@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\WithdrawalAccount;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class WithdrawalAccountController extends Controller
 {
@@ -12,7 +13,7 @@ class WithdrawalAccountController extends Controller
     {
         $accounts = WithdrawalAccount::orderByDesc('updated_at')
             ->paginate(25)->onEachSide(1)->withQueryString();
-        return view('admin.withdrawal_accounts', compact('accounts'));
+        return Inertia::render('Admin/WithdrawalAccounts', compact('accounts'));
     }
 
     public function update(Request $request, WithdrawalAccount $account)

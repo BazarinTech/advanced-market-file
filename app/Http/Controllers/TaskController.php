@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Package;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TaskController extends Controller
 {
@@ -25,9 +26,7 @@ class TaskController extends Controller
             ? asset('images/' . $claimImgFile)
             : asset('images/orderL.jpeg');
 
-        return view('dashboard.task', [
-            'user'          => $user,
-            'earnings'      => $user->earnings,
+        return Inertia::render('Dashboard/Task', [
             'orders'        => $orders,
             'canClaim'      => $canClaim,
             'packageImages' => $packageImages,

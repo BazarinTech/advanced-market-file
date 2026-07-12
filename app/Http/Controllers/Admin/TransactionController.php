@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
@@ -14,7 +15,7 @@ class TransactionController extends Controller
             ->orderByDesc('ID')
             ->paginate(25)->onEachSide(1)->withQueryString();
 
-        return view('admin.deposits', compact('deposits'));
+        return Inertia::render('Admin/Deposits', compact('deposits'));
     }
 
     public function manualDeposit(Request $request)
@@ -50,7 +51,7 @@ class TransactionController extends Controller
             ->orderByDesc('ID')
             ->paginate(25)->onEachSide(1)->withQueryString();
 
-        return view('admin.withdrawals', compact('withdrawals'));
+        return Inertia::render('Admin/Withdrawals', compact('withdrawals'));
     }
 
     public function approveWithdrawal(Request $request, $id)

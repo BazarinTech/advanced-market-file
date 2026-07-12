@@ -6,6 +6,7 @@ export interface User {
     refer: number;
     country: string;
     role: 'user' | 'admin';
+    date: string;
 }
 
 export interface AuthUser extends User {

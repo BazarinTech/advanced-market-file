@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class CouponController extends Controller
 {
     public function index()
     {
         $coupons = Coupon::orderByDesc('id')->paginate(20)->onEachSide(1);
-        return view('admin.coupons', compact('coupons'));
+        return Inertia::render('Admin/Coupons', compact('coupons'));
     }
 
     public function store(Request $request)

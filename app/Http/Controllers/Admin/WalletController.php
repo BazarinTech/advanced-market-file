@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Earning;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class WalletController extends Controller
 {
@@ -18,13 +19,13 @@ class WalletController extends Controller
 
         $wallets = $query->orderByDesc('balance')->paginate(20)->onEachSide(1)->withQueryString();
 
-        return view('admin.wallets', compact('wallets'));
+        return Inertia::render('Admin/Wallets', compact('wallets'));
     }
 
     public function edit(Earning $wallet)
     {
         $wallet->load('user');
-        return view('admin.wallet_edit', compact('wallet'));
+        return Inertia::render('Admin/WalletEdit', compact('wallet'));
     }
 
     public function update(Request $request, Earning $wallet)

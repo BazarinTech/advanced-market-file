@@ -7,12 +7,13 @@ use App\Models\CouponUse;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class CouponController extends Controller
 {
     public function show()
     {
-        return view('dashboard.coupon');
+        return Inertia::render('Dashboard/Coupon');
     }
 
     public function redeem(Request $request)

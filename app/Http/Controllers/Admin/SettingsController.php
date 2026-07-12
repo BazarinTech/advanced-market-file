@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class SettingsController extends Controller
 {
     public function index()
     {
-        return view('admin.settings', [
+        return Inertia::render('Admin/Settings', [
             'withdrawal_min'       => Setting::get('withdrawal_min', 50),
             'withdrawal_fee'       => Setting::get('withdrawal_fee', 5),
             'home_banner'          => Setting::get('home_banner'),

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PasswordRecoveryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -30,7 +31,7 @@ class UserController extends Controller
         $uplineEmails = \App\Models\User::whereIn('ID', $uplineIds)
             ->pluck('email', 'ID');
 
-        return view('admin.users', compact('users', 'uplineEmails', 'search'));
+        return Inertia::render('Admin/Users', compact('users', 'uplineEmails', 'search'));
     }
 
     public function updateStatus(Request $request, $id)
@@ -62,7 +63,7 @@ class UserController extends Controller
     public function recoveryRequests()
     {
         $requests = PasswordRecoveryRequest::orderByDesc('created_at')->get();
-        return view('admin.recovery-requests', compact('requests'));
+        return Inertia::render('Admin/RecoveryRequests', compact('requests'));
     }
 
     public function resolveRecovery(Request $request, $id)

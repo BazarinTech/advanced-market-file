@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
@@ -13,8 +14,7 @@ class TransactionController extends Controller
             ->orderByDesc('ID')
             ->get();
 
-        return view('dashboard.transaction', [
-            'user'         => $user,
+        return Inertia::render('Dashboard/Transaction', [
             'transactions' => $transactions,
         ]);
     }

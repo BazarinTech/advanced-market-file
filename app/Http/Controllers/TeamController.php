@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TeamController extends Controller
 {
@@ -30,9 +31,7 @@ class TeamController extends Controller
         $numActive    = $downline->where('status', 'Active')->count();
         $numDeposited = $depositTotals->count();
 
-        return view('dashboard.team', [
-            'user'          => $user,
-            'earnings'      => $earnings,
+        return Inertia::render('Dashboard/Team', [
             'downline'      => $downline,
             'numActive'     => $numActive,
             'numDeposited'  => $numDeposited,

@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Inertia\Inertia;
 
 class PackageController extends Controller
 {
     public function index()
     {
         $packages = Package::orderBy('amount')->get();
-        return view('admin.packages.index', compact('packages'));
+        return Inertia::render('Admin/Packages/Index', compact('packages'));
     }
 
     public function store(Request $request)

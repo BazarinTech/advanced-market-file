@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -42,9 +43,7 @@ class DashboardController extends Controller
             $chartValues = array_slice($chartValues, -10);
         }
 
-        return view('dashboard.home', [
-            'user'         => $user,
-            'earnings'     => $earnings,
+        return Inertia::render('Dashboard/Home', [
             'downline'     => $downline->count(),
             'numActive'    => $downline->where('status', 'Active')->count(),
             'chartLabels'  => $chartLabels,
@@ -54,13 +53,9 @@ class DashboardController extends Controller
 
     public function packages()
     {
-        $user     = Auth::user();
-        $earnings = $user->earnings;
         $packages = Package::where('active', true)->orderBy('amount')->get();
 
-        return view('dashboard.packages', [
-            'user'     => $user,
-            'earnings' => $earnings,
+        return Inertia::render('Dashboard/Packages', [
             'packages' => $packages,
         ]);
     }
@@ -100,12 +95,9 @@ class DashboardController extends Controller
     public function account()
     {
         $user     = Auth::user();
-        $earnings = $user->earnings;
         $downline = User::where('refer', $user->ID)->get();
 
-        return view('dashboard.account', [
-            'user'                  => $user,
-            'earnings'              => $earnings,
+        return Inertia::render('Dashboard/Account', [
             'downline'              => $downline->count(),
             'numActive'             => $downline->where('status', 'Active')->count(),
             'link_whatsapp'         => Setting::get('link_whatsapp'),
@@ -117,10 +109,7 @@ class DashboardController extends Controller
 
     public function userSettings()
     {
-        return view('dashboard.user', [
-            'user'     => Auth::user(),
-            'earnings' => Auth::user()->earnings,
-        ]);
+        return Inertia::render('Dashboard/User');
     }
 
     public function updateSettings(Request $request)
@@ -158,6 +147,6 @@ class DashboardController extends Controller
     public function packagesTable()
     {
         $packages = Package::orderBy('amount')->get();
-        return view('dashboard.table', compact('packages'));
+        return Inertia::render('Dashboard/Table', compact('packages'));
     }
 }

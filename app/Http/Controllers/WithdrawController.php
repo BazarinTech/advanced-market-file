@@ -8,6 +8,7 @@ use App\Models\WithdrawalAccount;
 use App\Services\PalplussService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class WithdrawController extends Controller
 {
@@ -18,9 +19,7 @@ class WithdrawController extends Controller
         $user    = auth()->user();
         $account = WithdrawalAccount::where('email', $user->email)->first();
 
-        return view('dashboard.withdraw', [
-            'user'           => $user,
-            'earnings'       => $user->earnings,
+        return Inertia::render('Dashboard/Withdraw', [
             'account'        => $account,
             'withdrawal_min' => (float) Setting::get('withdrawal_min', 50),
             'withdrawal_fee' => (float) Setting::get('withdrawal_fee', 5),
