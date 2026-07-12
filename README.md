@@ -1,58 +1,85 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Trade-Swing
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Trade-Swing is a fintech investment platform: users deposit funds via M-Pesa, buy investment packages, earn and claim daily returns, build a referral team, and withdraw earnings. It ships with a full admin panel for managing users, transactions, packages, coupons, and platform settings.
 
-## About Laravel
+## Tech stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Backend:** Laravel 13 (PHP 8.3), MySQL, session-based auth
+- **Frontend:** [Inertia.js](https://inertiajs.com) + Vue 3 + TypeScript — a server-routed SPA, no separate API layer
+- **UI:** Tailwind CSS v4 + [shadcn-vue](https://www.shadcn-vue.com) (reka-ui primitives), [Sonner](https://www.shadcn-vue.com/docs/components/sonner) for toast notifications
+- **Routing helper:** [Ziggy](https://github.com/tighten/ziggy) — use Laravel's `route()` names directly from Vue
+- **Payments:** PalPluss (M-Pesa STK push for deposits, B2C payouts for withdrawals)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**User-facing**
+- Registration with referral codes, login, password recovery request flow
+- Dashboard with portfolio balance, earnings summary, and a live market ticker
+- Investment packages (buy, view daily returns, compare plans)
+- Daily earnings claiming per active order
+- Deposits (M-Pesa STK push) and withdrawals (to a saved M-Pesa account)
+- Referral team view with per-member deposit stats and an invite link
+- Coupon redemption
+- Profile settings (phone number, password change)
 
-## Learning Laravel
+**Admin**
+- Dashboard KPIs (deposits, withdrawals, balances, user counts)
+- User management (activate/deactivate, promote to admin, reset password, search)
+- Deposit/withdrawal review (manual deposit entry, approve/reject withdrawals)
+- Password recovery request queue
+- Investment package CRUD (with image upload)
+- Coupon CRUD
+- Withdrawal account management
+- Wallet balance editing per user
+- Platform settings: withdrawal min/fee, home banner image, claim-page image, social/support links
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Getting started
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+**Requirements:** PHP 8.3+, Composer, Node 20+, MySQL.
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+npm install
+cp .env.example .env   # if starting fresh
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Configure `.env` — database credentials, and if you need working payments/notifications, the PalPluss keys (`PALPLUSS_*`) and support/link settings (`SUPPORT_*`, `*_URL`).
 
-## Contributing
+**First run:** if `storage/installed.lock` doesn't exist, visiting the app redirects to `/setup` — a standalone installation wizard that checks PHP requirements, tests the DB connection, runs migrations, and creates the first admin account. This page is intentionally plain Blade/vanilla JS (it runs before the app is configured, so it can't depend on the Vite build).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Once installed, run the full dev stack (PHP server + Vite HMR + queue worker + log tailing, all together):
 
-## Code of Conduct
+```bash
+composer run dev
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Or individually:
 
-## Security Vulnerabilities
+```bash
+php artisan serve       # backend
+npm run dev              # Vite dev server (HMR)
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Production build:**
 
-## License
+```bash
+npm run build
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Project structure
+
+- `routes/web.php` — all routes; every controller action either renders an Inertia page or redirects with a flash message
+- `resources/js/Pages/{Auth,Dashboard,Admin}/*.vue` — one Vue page per route, mirroring the controller structure
+- `resources/js/layouts/{AppLayout,AdminLayout}.vue` — the two shells (dark fintech theme for user pages, light theme for admin)
+- `resources/js/components/` — shared pieces: `Icon.vue` (inlines SVGs from `public/icons/hugeicons`), `PageHeader`, `Pagination`, `BottomNav`
+- `resources/js/components/ui/` — shadcn-vue primitives (Button, Card, Dialog, Table, Tabs, Sonner, etc.)
+- `resources/js/composables/useFlashToasts.ts` — bridges Laravel session flash messages and Inertia validation errors to Sonner toasts, centrally, for every page
+- `app/Http/Middleware/HandleInertiaRequests.php` — shares the authenticated user (with earnings) and flash messages on every request
+- `app/Models/` — `User`, `Earning`, `Order`, `Package`, `Transaction`, `Coupon`, `CouponUse`, `WithdrawalAccount`, `PasswordRecoveryRequest`, `Setting`
+
+## Notes for contributors
+
+- Type-check the frontend with `npx vue-tsc --noEmit` before committing.
+- `User` has a legacy dual-password field (`passwrd` plaintext, `password` hashed) — login checks the hash first and falls back to plaintext, migrating it to hashed on success. Don't remove the plaintext fallback without a migration plan for existing accounts.
+- Decimal-cast model attributes (`Earning.balance`, `Transaction.amount`, `Package.amount`, etc.) serialize to Inertia as **strings**, not numbers — see `resources/js/types/models.ts`.
+- `/callback` and `/callback/b2c` are unauthenticated JSON webhook endpoints for PalPluss payment callbacks — CSRF-exempt by design, not part of the Inertia app.
