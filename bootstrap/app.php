@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'not.installed' => \App\Http\Middleware\CheckNotInstalled::class,
         ]);
 
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
+        ]);
+
         $middleware->validateCsrfTokens(except: [
             '/callback',
             '/callback/b2c',

@@ -8,12 +8,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
-        return view('auth.login');
+        return Inertia::render('Auth/Login');
     }
 
     public function login(Request $request)
@@ -57,7 +58,7 @@ class AuthController extends Controller
     public function showRegister(Request $request)
     {
         $ref = $request->query('invite', '1631');
-        return view('auth.register', compact('ref'));
+        return Inertia::render('Auth/Register', compact('ref'));
     }
 
     public function register(Request $request)
@@ -96,7 +97,7 @@ class AuthController extends Controller
 
     public function showForgot()
     {
-        return view('auth.forgot', [
+        return Inertia::render('Auth/Forgot', [
             'support_email'   => config('services.support.email'),
             'support_phone'   => config('services.support.phone'),
             'support_network' => config('services.support.network'),
