@@ -49,10 +49,10 @@ class AuthController extends Controller
         Auth::login($user, $request->boolean('remember'));
 
         if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.dashboard')->with('success', 'Welcome back!');
         }
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('success', 'Welcome back!');
     }
 
     public function showRegister(Request $request)
@@ -92,7 +92,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'Signed out successfully.');
     }
 
     public function showForgot()

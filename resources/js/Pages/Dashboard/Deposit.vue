@@ -45,13 +45,6 @@ function submit() {
                 </div>
             </div>
 
-            <div
-                v-if="Object.keys(form.errors).length"
-                class="px-4 py-2 rounded-lg text-sm text-destructive bg-destructive/10 border border-destructive/20"
-            >
-                {{ Object.values(form.errors)[0] }}
-            </div>
-
             <!-- Form -->
             <div class="rounded-xl p-5 bg-card border border-border">
                 <form class="flex flex-col gap-4" @submit.prevent="submit">

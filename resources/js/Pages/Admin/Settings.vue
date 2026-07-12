@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import Icon from '@/components/Icon.vue';
-import { useFlash } from '@/composables/useFlash';
-import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps<{
     withdrawal_min: number;
@@ -15,8 +13,6 @@ const props = defineProps<{
     link_customer_support: string | null;
     link_download_app: string | null;
 }>();
-
-const flash = useFlash();
 
 // ── Withdrawal settings ──
 const withdrawalForm = useForm({
@@ -89,10 +85,6 @@ function submitLinks() {
                     <h2 class="text-base font-semibold text-gray-700">Withdrawal Settings</h2>
                 </div>
 
-                <div v-if="flash.success_withdrawal" class="bg-green-50 border border-green-300 text-green-700 text-sm px-4 py-2 rounded mb-4">
-                    {{ flash.success_withdrawal }}
-                </div>
-
                 <form class="flex flex-col gap-5" @submit.prevent="submitWithdrawal">
                     <div>
                         <label class="block text-sm font-medium text-gray-600 mb-1">Minimum Withdrawal Amount (Kes)</label>
@@ -142,10 +134,6 @@ function submitLinks() {
                     <h2 class="text-base font-semibold text-gray-700">Home Page Banner</h2>
                 </div>
 
-                <div v-if="flash.success_banner" class="bg-green-50 border border-green-300 text-green-700 text-sm px-4 py-2 rounded mb-4">
-                    {{ flash.success_banner }}
-                </div>
-
                 <div v-if="home_banner" class="mb-4">
                     <p class="text-xs text-gray-400 mb-2 uppercase tracking-wide">Current Banner</p>
                     <img :src="`/images/${home_banner}`" class="w-full h-36 object-cover rounded-lg border border-gray-200" alt="Current Banner">
@@ -182,10 +170,6 @@ function submitLinks() {
                 <div class="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100">
                     <div class="w-1 h-5 bg-purple-500 rounded"></div>
                     <h2 class="text-base font-semibold text-gray-700">Orders Page — Claim Image</h2>
-                </div>
-
-                <div v-if="flash.success_claim_image" class="bg-green-50 border border-green-300 text-green-700 text-sm px-4 py-2 rounded mb-4">
-                    {{ flash.success_claim_image }}
                 </div>
 
                 <div v-if="claim_image" class="mb-4 flex items-center gap-4">
@@ -226,19 +210,6 @@ function submitLinks() {
                 <div class="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100">
                     <div class="w-1 h-5 bg-indigo-500 rounded"></div>
                     <h2 class="text-base font-semibold text-gray-700">Links &amp; Social</h2>
-                </div>
-
-                <div v-if="flash.success_links" class="bg-green-50 border border-green-300 text-green-700 text-sm px-4 py-2 rounded mb-4">
-                    {{ flash.success_links }}
-                </div>
-                <div
-                    v-if="linksForm.errors.link_whatsapp || linksForm.errors.link_telegram || linksForm.errors.link_customer_support || linksForm.errors.link_download_app"
-                    class="bg-red-50 border border-red-300 text-red-700 text-sm px-4 py-2 rounded mb-4"
-                >
-                    <p v-if="linksForm.errors.link_whatsapp">{{ linksForm.errors.link_whatsapp }}</p>
-                    <p v-if="linksForm.errors.link_telegram">{{ linksForm.errors.link_telegram }}</p>
-                    <p v-if="linksForm.errors.link_customer_support">{{ linksForm.errors.link_customer_support }}</p>
-                    <p v-if="linksForm.errors.link_download_app">{{ linksForm.errors.link_download_app }}</p>
                 </div>
 
                 <form class="flex flex-col gap-5" @submit.prevent="submitLinks">

@@ -2,11 +2,13 @@
 import { onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import BottomNav from '@/components/BottomNav.vue';
-import FlashBanner from '@/components/FlashBanner.vue';
+import { useFlashToasts } from '@/composables/useFlashToasts';
 
 withDefaults(defineProps<{ showBottomNav?: boolean }>(), {
     showBottomNav: false,
 });
+
+useFlashToasts();
 
 const SKIP_CLASSES = ['object-contain', 'w-4', 'w-5', 'w-6'];
 
@@ -54,7 +56,6 @@ onUnmounted(removeFinishListener);
 
 <template>
     <div class="dark bg-background text-foreground flex flex-col items-center min-h-screen max-w-150 mx-auto">
-        <FlashBanner />
         <slot />
         <BottomNav v-if="showBottomNav" />
     </div>

@@ -26,13 +26,6 @@ function submit() {
                 <p class="text-muted-foreground text-xs tracking-[0.3em] uppercase mt-1">Welcome back</p>
             </div>
 
-            <div
-                v-if="Object.keys(form.errors).length"
-                class="w-full px-4 py-2 rounded-lg mb-4 text-sm text-destructive bg-destructive/10 border border-destructive/20"
-            >
-                {{ Object.values(form.errors)[0] }}
-            </div>
-
             <form class="w-full flex flex-col gap-4" @submit.prevent="submit">
                 <div class="rounded-xl px-4 py-3 bg-card border border-border">
                     <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Email Address</label>

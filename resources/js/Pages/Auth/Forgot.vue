@@ -35,13 +35,6 @@ function submit() {
                 <p class="text-muted-foreground text-xs tracking-[0.3em] uppercase mt-1">Account Recovery</p>
             </div>
 
-            <div
-                v-if="Object.keys(form.errors).length"
-                class="w-full px-4 py-2 rounded-lg mb-4 text-sm text-destructive bg-destructive/10 border border-destructive/20"
-            >
-                <p v-for="(e, k) in form.errors" :key="k">{{ e }}</p>
-            </div>
-
             <div class="w-full rounded-xl px-4 py-4 mb-4 flex items-start gap-3 bg-card border border-border">
                 <Icon name="circle-info" class="text-primary mt-0.5 text-sm shrink-0" />
                 <div class="space-y-1.5">

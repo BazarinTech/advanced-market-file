@@ -42,14 +42,6 @@ function uppercase() {
                 </p>
             </div>
 
-            <div
-                v-if="Object.keys(form.errors).length"
-                class="px-4 py-3 rounded-lg text-sm text-destructive bg-destructive/10 border border-destructive/20 flex items-center gap-2"
-            >
-                <Icon name="circle-xmark" class="shrink-0" />
-                {{ Object.values(form.errors)[0] }}
-            </div>
-
             <!-- Redemption form -->
             <div class="rounded-xl p-5 bg-card border border-border">
                 <form class="flex flex-col gap-4" @submit.prevent="submit">

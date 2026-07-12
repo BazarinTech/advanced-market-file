@@ -2,7 +2,9 @@
 import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import Icon from '@/components/Icon.vue';
-import FlashBanner from '@/components/FlashBanner.vue';
+import { useFlashToasts } from '@/composables/useFlashToasts';
+
+useFlashToasts();
 
 const sidebarOpen = ref(window.innerWidth >= 1024);
 
@@ -60,7 +62,6 @@ function logout() {
             </header>
 
             <main class="p-6 flex-1">
-                <FlashBanner :keys="['success', 'error']" />
                 <slot />
             </main>
         </div>
