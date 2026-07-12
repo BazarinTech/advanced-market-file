@@ -31,11 +31,11 @@ function submit() {
                 <div class="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4">
                     <Icon name="lock" class="text-primary-foreground text-2xl" />
                 </div>
-                <p class="text-white text-2xl font-bold tracking-widest uppercase">Trade-Swing</p>
+                <p class="text-foreground text-2xl font-bold tracking-widest uppercase">Mythos Task</p>
                 <p class="text-muted-foreground text-xs tracking-[0.3em] uppercase mt-1">Account Recovery</p>
             </div>
 
-            <div class="w-full rounded-xl px-4 py-4 mb-4 flex items-start gap-3 bg-card border border-border">
+            <div class="w-full rounded-2xl px-4 py-4 mb-4 flex items-start gap-3 bg-card border border-border">
                 <Icon name="circle-info" class="text-primary mt-0.5 text-sm shrink-0" />
                 <div class="space-y-1.5">
                     <p class="text-muted-foreground text-xs tracking-wide leading-relaxed">Fill in the form below with the details you used to create your account.</p>
@@ -48,52 +48,52 @@ function submit() {
                 <a
                     :href="support_url"
                     target="_blank"
-                    class="w-full flex items-center justify-between rounded-xl px-4 py-3.5 no-underline transition-colors bg-card border border-border"
+                    class="w-full flex items-center justify-between rounded-2xl px-4 py-3.5 no-underline transition-colors bg-card border border-border hover:border-primary/40"
                 >
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
+                        <div class="w-9 h-9 rounded-xl bg-success/10 flex items-center justify-center shrink-0">
                             <Icon name="whatsapp" class="text-success text-base" />
                         </div>
-                        <span class="text-white text-sm font-light tracking-wide">Contact Support Now</span>
+                        <span class="text-foreground text-sm font-light tracking-wide">Contact Support Now</span>
                     </div>
-                    <Icon name="angle-right" class="text-border text-sm" />
+                    <Icon name="angle-right" class="text-muted-foreground text-sm" />
                 </a>
             </div>
 
-            <div class="w-full rounded-xl p-5 mb-6 bg-card border border-border">
+            <div class="w-full rounded-2xl p-5 mb-6 bg-card border border-border">
                 <p class="text-muted-foreground text-[10px] tracking-[0.3em] uppercase mb-4">Submit Recovery Request</p>
 
                 <form class="flex flex-col gap-3" @submit.prevent="submit">
-                    <div class="rounded-lg px-4 py-3 bg-secondary border border-border">
+                    <div class="rounded-xl px-4 py-3 bg-secondary border border-border">
                         <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Full Name</label>
                         <input
                             v-model="form.name"
                             type="text"
                             placeholder="As used on account"
-                            class="w-full bg-transparent outline-none text-sm text-white placeholder-border"
+                            class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                             required
                         >
                     </div>
 
-                    <div class="rounded-lg px-4 py-3 bg-secondary border border-border">
+                    <div class="rounded-xl px-4 py-3 bg-secondary border border-border">
                         <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Email Address</label>
                         <input
                             v-model="form.email"
                             type="email"
                             placeholder="your@email.com"
-                            class="w-full bg-transparent outline-none text-sm text-white placeholder-border"
+                            class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                             required
                         >
                     </div>
 
-                    <div class="rounded-lg px-4 py-3 flex gap-3 items-start bg-secondary border border-border">
+                    <div class="rounded-xl px-4 py-3 flex gap-3 items-start bg-secondary border border-border">
                         <div class="flex-1">
                             <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Phone Number</label>
                             <input
                                 v-model="form.phone"
                                 type="tel"
                                 placeholder="07xxxxxxxx"
-                                class="w-full bg-transparent outline-none text-sm text-white placeholder-border"
+                                class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                                 required
                             >
                         </div>
@@ -115,7 +115,7 @@ function submit() {
                     <button
                         type="submit"
                         :disabled="form.processing"
-                        class="w-full bg-primary hover:bg-[#00a88a] text-primary-foreground font-bold py-3.5 rounded-lg tracking-[0.2em] uppercase text-xs mt-1 disabled:opacity-70"
+                        class="w-full bg-primary hover:bg-amber-700 text-primary-foreground font-bold py-3.5 rounded-xl tracking-[0.2em] uppercase text-xs mt-1 disabled:opacity-70"
                     >
                         {{ form.processing ? 'Submitting...' : 'Submit Request' }}
                     </button>

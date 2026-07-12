@@ -7,7 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import { Toaster } from '@/components/ui/sonner';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Trade-Swing';
+const appName = import.meta.env.VITE_APP_NAME || 'Mythos Task';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
@@ -17,12 +17,12 @@ createInertiaApp({
             import.meta.glob<DefineComponent>('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => [h(App, props), h(Toaster, { theme: 'dark', position: 'top-center', richColors: true })] })
+        createApp({ render: () => [h(App, props), h(Toaster, { theme: 'light', position: 'top-center', richColors: true })] })
             .use(plugin)
             .use(ZiggyVue)
             .mount(el);
     },
     progress: {
-        color: '#00c9a7',
+        color: '#d97706',
     },
 });

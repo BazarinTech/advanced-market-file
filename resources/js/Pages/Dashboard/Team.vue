@@ -74,11 +74,11 @@ async function copyInviteLink() {
             </div>
             <div class="flex flex-col gap-1 items-center py-4 border-b border-border bg-card">
                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">Total Members</p>
-                <p class="text-white text-sm font-semibold">{{ downline.length }}</p>
+                <p class="text-foreground text-sm font-semibold">{{ downline.length }}</p>
             </div>
             <div class="flex flex-col gap-1 items-center py-4 border-r border-border bg-card">
                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">Deposited</p>
-                <p class="text-white text-sm font-semibold">{{ numDeposited }}</p>
+                <p class="text-foreground text-sm font-semibold">{{ numDeposited }}</p>
             </div>
             <div class="flex flex-col gap-1 items-center py-4 bg-card">
                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">Active</p>
@@ -88,7 +88,7 @@ async function copyInviteLink() {
 
         <div class="w-full px-4 mt-4 flex flex-col gap-3 pb-10">
             <!-- Referral Link Card -->
-            <div class="rounded-xl p-4 bg-card border border-border">
+            <div class="rounded-2xl p-4 bg-card border border-border">
                 <p class="text-muted-foreground text-[10px] tracking-[0.3em] uppercase mb-1">Your Referral Code</p>
                 <p class="text-primary text-lg font-semibold tracking-widest mb-4">{{ user.ID }}</p>
 
@@ -99,11 +99,11 @@ async function copyInviteLink() {
                         type="text"
                         readonly
                         :value="inviteLink"
-                        class="flex-1 rounded-lg px-3 py-2.5 text-xs text-muted-foreground outline-none truncate tracking-wide bg-secondary border border-border"
+                        class="flex-1 rounded-2xl px-3 py-2.5 text-xs text-muted-foreground outline-none truncate tracking-wide bg-secondary border border-border"
                     />
                     <button
                         type="button"
-                        class="bg-primary hover:bg-[#00a88a] text-primary-foreground text-xs font-bold px-4 py-2.5 rounded-lg uppercase tracking-widest whitespace-nowrap transition-colors"
+                        class="bg-primary hover:bg-amber-700 text-primary-foreground text-xs font-bold px-4 py-2.5 rounded-2xl uppercase tracking-widest whitespace-nowrap transition-colors"
                         @click="copyInviteLink"
                     >
                         <template v-if="copied">✓ Copied!</template>
@@ -120,14 +120,14 @@ async function copyInviteLink() {
             <div
                 v-for="member in downline"
                 :key="member.ID"
-                class="rounded-xl px-4 py-3 flex items-center justify-between bg-card border border-border"
+                class="rounded-2xl px-4 py-3 flex items-center justify-between bg-card border border-border"
             >
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                         <Icon name="user" class="text-primary text-sm" />
                     </div>
                     <div>
-                        <p class="text-white text-sm font-light tracking-wide">{{ maskPhone(member.phone) }}</p>
+                        <p class="text-foreground text-sm font-light tracking-wide">{{ maskPhone(member.phone) }}</p>
                         <p
                             class="text-xs tracking-widest uppercase mt-0.5"
                             :class="member.status === 'Active' ? 'text-success' : 'text-destructive'"
@@ -138,7 +138,7 @@ async function copyInviteLink() {
                 </div>
                 <div class="text-center">
                     <p class="text-muted-foreground text-[9px] tracking-widest uppercase mb-0.5">Deposited</p>
-                    <p class="text-white text-sm font-semibold">Kes {{ moneyRound(depositTotals[member.email] ?? 0) }}</p>
+                    <p class="text-foreground text-sm font-semibold">Kes {{ moneyRound(depositTotals[member.email] ?? 0) }}</p>
                 </div>
                 <div class="text-right">
                     <p class="text-muted-foreground text-[10px]">{{ member.date }}</p>
@@ -148,7 +148,7 @@ async function copyInviteLink() {
 
         <!-- Toast -->
         <div
-            class="fixed bottom-6 left-1/2 rounded-xl text-white text-xs px-5 py-2.5 shadow-xl z-50 flex items-center gap-2 uppercase tracking-widest bg-card border border-border transition-all"
+            class="fixed bottom-6 left-1/2 rounded-2xl text-foreground text-xs px-5 py-2.5 shadow-xl z-50 flex items-center gap-2 uppercase tracking-widest bg-card border border-border transition-all"
             :style="{
                 opacity: copied ? 1 : 0,
                 transform: `translateX(-50%) translateY(${copied ? 0 : 16}px)`,

@@ -40,17 +40,17 @@ function money(v: string | number) {
             <div
                 v-for="tx in transactions"
                 :key="tx.ID"
-                class="rounded-xl px-4 py-3 flex items-center justify-between bg-card border border-border"
+                class="rounded-2xl px-4 py-3 flex items-center justify-between bg-card border border-border"
             >
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                        class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                         :class="isCredit(tx) ? 'bg-success/10' : 'bg-destructive/10'"
                     >
                         <Icon :name="isCredit(tx) ? 'arrow-down' : 'arrow-up'" :class="isCredit(tx) ? 'text-success' : 'text-destructive'" class="text-sm" />
                     </div>
                     <div>
-                        <p class="text-white text-sm font-medium tracking-wide">{{ tx.type }}</p>
+                        <p class="text-foreground text-sm font-medium tracking-wide">{{ tx.type }}</p>
                         <p class="text-xs tracking-widest mt-0.5" :class="statusClass(tx.status)">{{ tx.status }}</p>
                     </div>
                 </div>

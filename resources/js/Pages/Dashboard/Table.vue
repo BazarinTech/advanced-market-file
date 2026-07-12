@@ -21,29 +21,29 @@ function roi(pkg: Package): string {
 </script>
 
 <template>
-    <Head title="Investment Plans" />
+    <Head title="Tasks" />
 
     <AppLayout>
-        <PageHeader title="Investment Plans" back-route="account" />
+        <PageHeader title="Tasks" back-route="account" />
 
         <div class="w-full flex flex-col px-4 pb-10 mt-4 gap-4">
             <!-- Section heading -->
             <div class="flex items-center gap-3">
                 <div class="w-4 h-px bg-primary"></div>
-                <p class="text-muted-foreground text-[10px] tracking-[0.3em] uppercase">Plans at a Glance</p>
+                <p class="text-muted-foreground text-[10px] tracking-[0.3em] uppercase">Tasks at a Glance</p>
                 <div class="flex-1 h-px bg-border"></div>
             </div>
 
             <!-- Comparison table -->
-            <div class="rounded-xl overflow-hidden overflow-x-auto bg-card border border-border">
+            <div class="rounded-2xl overflow-hidden overflow-x-auto bg-card border border-border">
                 <table class="w-full text-xs border-collapse" style="min-width: 340px">
                     <thead>
                         <tr class="bg-secondary border-b border-border">
-                            <td class="px-3 py-3 text-left font-light tracking-[0.2em] uppercase text-primary border-r border-border">Plan</td>
+                            <td class="px-3 py-3 text-left font-light tracking-[0.2em] uppercase text-primary border-r border-border">Task</td>
                             <td
                                 v-for="pkg in packages"
                                 :key="pkg.id"
-                                class="px-3 py-3 text-center font-light tracking-widest uppercase text-white border-r border-border"
+                                class="px-3 py-3 text-center font-light tracking-widest uppercase text-foreground border-r border-border"
                             >
                                 {{ pkg.name }}
                             </td>
@@ -58,7 +58,7 @@ function roi(pkg: Package): string {
                             <td
                                 v-for="pkg in packages"
                                 :key="pkg.id"
-                                class="px-3 py-3 text-center text-white font-semibold tracking-wide border-r border-border bg-card"
+                                class="px-3 py-3 text-center text-foreground font-semibold tracking-wide border-r border-border bg-card"
                             >
                                 Kes {{ moneyRound(pkg.amount) }}
                             </td>
@@ -86,7 +86,7 @@ function roi(pkg: Package): string {
                             <td
                                 v-for="pkg in packages"
                                 :key="pkg.id"
-                                class="px-3 py-3 text-center text-white font-semibold tracking-wide border-r border-border bg-card"
+                                class="px-3 py-3 text-center text-foreground font-semibold tracking-wide border-r border-border bg-card"
                             >
                                 Kes {{ moneyRound(pkg.daily) }}
                             </td>
@@ -101,17 +101,17 @@ function roi(pkg: Package): string {
                             <td
                                 v-for="pkg in packages"
                                 :key="pkg.id"
-                                class="px-3 py-3 text-center text-white font-semibold tracking-wide border-r border-border bg-secondary"
+                                class="px-3 py-3 text-center text-foreground font-semibold tracking-wide border-r border-border bg-secondary"
                             >
                                 Kes {{ moneyRound(Number(pkg.daily) * pkg.days) }}
                             </td>
                         </tr>
-                        <!-- ROI -->
+                        <!-- Reward -->
                         <tr>
                             <td
                                 class="px-3 py-3 text-primary tracking-widest uppercase font-light whitespace-nowrap border-r border-border bg-secondary"
                             >
-                                Return
+                                Reward
                             </td>
                             <td
                                 v-for="pkg in packages"
@@ -124,7 +124,7 @@ function roi(pkg: Package): string {
                     </tbody>
                 </table>
                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase text-right px-3 py-2">
-                    Return on investment over full cycle
+                    Total reward over full cycle
                 </p>
             </div>
 
@@ -136,36 +136,36 @@ function roi(pkg: Package): string {
             </div>
 
             <!-- Withdrawal terms -->
-            <div class="rounded-xl overflow-hidden grid grid-cols-3 bg-card border border-border">
+            <div class="rounded-2xl overflow-hidden grid grid-cols-3 bg-card border border-border">
                 <div class="flex flex-col items-center py-5 px-2 gap-1.5 border-r border-border">
-                    <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center mb-1">
+                    <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center mb-1">
                         <Icon name="money-bill-wave" class="text-primary text-sm" />
                     </div>
                     <p class="text-muted-foreground text-[9px] tracking-widest uppercase text-center">Min. Withdrawal</p>
-                    <p class="text-white text-sm font-semibold">Kes 200</p>
+                    <p class="text-foreground text-sm font-semibold">Kes 200</p>
                 </div>
                 <div class="flex flex-col items-center py-5 px-2 gap-1.5 border-r border-border">
-                    <div class="w-9 h-9 rounded-lg bg-warning/10 flex items-center justify-center mb-1">
+                    <div class="w-9 h-9 rounded-xl bg-warning/10 flex items-center justify-center mb-1">
                         <Icon name="percent" class="text-warning text-sm" />
                     </div>
                     <p class="text-muted-foreground text-[9px] tracking-widest uppercase text-center">Fee Charged</p>
-                    <p class="text-white text-sm font-semibold">6%</p>
+                    <p class="text-foreground text-sm font-semibold">6%</p>
                 </div>
                 <div class="flex flex-col items-center py-5 px-2 gap-1.5">
-                    <div class="w-9 h-9 rounded-lg bg-success/10 flex items-center justify-center mb-1">
+                    <div class="w-9 h-9 rounded-xl bg-success/10 flex items-center justify-center mb-1">
                         <Icon name="bolt" class="text-success text-sm" />
                     </div>
                     <p class="text-muted-foreground text-[9px] tracking-widest uppercase text-center">Processing</p>
-                    <p class="text-white text-sm font-semibold">Instant</p>
+                    <p class="text-foreground text-sm font-semibold">Instant</p>
                 </div>
             </div>
 
             <!-- CTA -->
             <Link
                 :href="route('packages')"
-                class="w-full rounded-lg bg-primary hover:bg-[#00a88a] text-primary-foreground font-bold text-xs py-3.5 tracking-[0.2em] uppercase text-center no-underline transition-colors"
+                class="w-full rounded-2xl bg-primary hover:bg-amber-700 text-primary-foreground font-bold text-xs py-3.5 tracking-[0.2em] uppercase text-center no-underline transition-colors"
             >
-                View Investment Plans
+                View Available Tasks
             </Link>
         </div>
     </AppLayout>

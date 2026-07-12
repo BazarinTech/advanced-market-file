@@ -55,7 +55,7 @@ onUnmounted(removeFinishListener);
 </script>
 
 <template>
-    <div class="dark bg-background text-foreground flex flex-col items-center min-h-screen max-w-150 mx-auto">
+    <div class="theme-app bg-background text-foreground flex flex-col items-center min-h-screen max-w-150 mx-auto">
         <slot />
         <BottomNav v-if="showBottomNav" />
     </div>
@@ -74,7 +74,7 @@ onUnmounted(removeFinishListener);
     position: absolute;
     inset: 0;
     z-index: 2;
-    background: linear-gradient(90deg, #0d1f35 25%, #162f47 50%, #0d1f35 75%);
+    background: linear-gradient(90deg, #f5f5f4 25%, #e7e5e4 50%, #f5f5f4 75%);
     background-size: 200% 100%;
     animation: skeletonShimmer 1.4s ease-in-out infinite;
     transition: opacity 0.35s ease;

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Setup Wizard — {{ config('app.name', 'Trade-Swing') }}</title>
+    <title>Setup Wizard — {{ config('app.name', 'Mythos Task') }}</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { background: #050f1a; }
@@ -46,7 +46,7 @@
         <div class="w-14 h-14 rounded-2xl bg-[#00c9a7] flex items-center justify-center mx-auto mb-3">
             <x-icon name="chart-line" class="text-[#050f1a] text-2xl" />
         </div>
-        <p class="text-white text-xl font-bold tracking-widest uppercase">{{ config('app.name', 'Trade-Swing') }}</p>
+        <p class="text-white text-xl font-bold tracking-widest uppercase">{{ config('app.name', 'Mythos Task') }}</p>
         <p class="text-[#64899a] text-xs tracking-[.3em] uppercase mt-1">Setup Wizard</p>
     </div>
 
@@ -155,7 +155,7 @@
             <div class="flex flex-col gap-3 mb-4">
                 <div class="input-wrap">
                     <label>App Name</label>
-                    <input type="text" name="app_name" placeholder="e.g. Trade-Swing" value="Trade-Swing">
+                    <input type="text" name="app_name" placeholder="e.g. Mythos Task" value="Mythos Task">
                 </div>
                 <div class="input-wrap">
                     <label>App URL (no trailing slash)</label>
@@ -316,7 +316,7 @@
 
     </div>
 
-    <p class="text-[#1a3a4a] text-xs mt-8">{{ config('app.name', 'Trade-Swing') }} · Setup Wizard</p>
+    <p class="text-[#1a3a4a] text-xs mt-8">{{ config('app.name', 'Mythos Task') }} · Setup Wizard</p>
 </div>
 
 <script>

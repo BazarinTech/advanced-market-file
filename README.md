@@ -1,6 +1,6 @@
-# Trade-Swing
+# Mythos Task
 
-Trade-Swing is a fintech investment platform: users deposit funds via M-Pesa, buy investment packages, earn and claim daily returns, build a referral team, and withdraw earnings. It ships with a full admin panel for managing users, transactions, packages, coupons, and platform settings.
+Mythos Task is a task-earning platform: users fund their wallet via M-Pesa, start paid tasks, claim daily rewards, build a referral team, and withdraw earnings. It ships with a full admin panel for managing users, transactions, tasks, coupons, and platform settings.
 
 ## Tech stack
 
@@ -14,9 +14,9 @@ Trade-Swing is a fintech investment platform: users deposit funds via M-Pesa, bu
 
 **User-facing**
 - Registration with referral codes, login, password recovery request flow
-- Dashboard with portfolio balance, earnings summary, and a live market ticker
-- Investment packages (buy, view daily returns, compare plans)
-- Daily earnings claiming per active order
+- Dashboard with wallet balance, earnings summary, and active-task overview
+- Tasks (start a task, view daily rewards, compare all tasks)
+- Daily reward claiming per active task
 - Deposits (M-Pesa STK push) and withdrawals (to a saved M-Pesa account)
 - Referral team view with per-member deposit stats and an invite link
 - Coupon redemption
@@ -27,7 +27,7 @@ Trade-Swing is a fintech investment platform: users deposit funds via M-Pesa, bu
 - User management (activate/deactivate, promote to admin, reset password, search)
 - Deposit/withdrawal review (manual deposit entry, approve/reject withdrawals)
 - Password recovery request queue
-- Investment package CRUD (with image upload)
+- Task package CRUD (with image upload)
 - Coupon CRUD
 - Withdrawal account management
 - Wallet balance editing per user
@@ -70,7 +70,7 @@ npm run build
 
 - `routes/web.php` — all routes; every controller action either renders an Inertia page or redirects with a flash message
 - `resources/js/Pages/{Auth,Dashboard,Admin}/*.vue` — one Vue page per route, mirroring the controller structure
-- `resources/js/layouts/{AppLayout,AdminLayout}.vue` — the two shells (dark fintech theme for user pages, light theme for admin)
+- `resources/js/layouts/{AppLayout,AdminLayout}.vue` — the two shells (warm stone/amber theme for user pages, gray/blue theme for admin — deliberately different systems, scoped independently in `resources/css/app.css`)
 - `resources/js/components/` — shared pieces: `Icon.vue` (inlines SVGs from `public/icons/hugeicons`), `PageHeader`, `Pagination`, `BottomNav`
 - `resources/js/components/ui/` — shadcn-vue primitives (Button, Card, Dialog, Table, Tabs, Sonner, etc.)
 - `resources/js/composables/useFlashToasts.ts` — bridges Laravel session flash messages and Inertia validation errors to Sonner toasts, centrally, for every page

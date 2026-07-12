@@ -42,26 +42,26 @@ function logout() {
 
         <div class="w-full px-4 mt-4 flex flex-col gap-2">
             <!-- Info rows -->
-            <div class="rounded-xl overflow-hidden bg-card border border-border">
+            <div class="rounded-2xl overflow-hidden bg-card border border-border">
                 <div class="flex items-center justify-between px-4 py-4 border-b border-border">
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                             <Icon name="envelope" class="text-primary text-sm" />
                         </div>
                         <div>
                             <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Email</p>
-                            <p class="text-white text-sm font-light mt-0.5">{{ user.email }}</p>
+                            <p class="text-foreground text-sm font-light mt-0.5">{{ user.email }}</p>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center justify-between px-4 py-4 border-b border-border">
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                             <Icon name="phone" class="text-primary text-sm" />
                         </div>
                         <div>
                             <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Phone</p>
-                            <p class="text-white text-sm font-light mt-0.5">{{ user.phone }}</p>
+                            <p class="text-foreground text-sm font-light mt-0.5">{{ user.phone }}</p>
                         </div>
                     </div>
                 </div>
@@ -71,11 +71,11 @@ function logout() {
                     @click="passModalOpen = true"
                 >
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-warning/10 flex items-center justify-center shrink-0">
+                        <div class="w-9 h-9 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
                             <Icon name="lock" class="text-warning text-sm" />
                         </div>
                         <div>
-                            <p class="text-white text-sm font-light">Change Password</p>
+                            <p class="text-foreground text-sm font-light">Change Password</p>
                             <p class="text-muted-foreground text-[10px] mt-0.5">Update your login password</p>
                         </div>
                     </div>
@@ -88,10 +88,9 @@ function logout() {
                 <button
                     type="submit"
                     :disabled="logoutForm.processing"
-                    class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left transition-colors disabled:opacity-70"
-                    style="background: #1a0a0a; border: 1px solid #3a1a1a"
+                    class="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left transition-colors disabled:opacity-70 bg-destructive/10 border border-destructive/20"
                 >
-                    <div class="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
+                    <div class="w-9 h-9 rounded-xl bg-destructive/10 flex items-center justify-center shrink-0">
                         <Icon name="right-from-bracket" class="text-destructive text-sm" />
                     </div>
                     <span class="text-destructive text-sm tracking-wide font-light">Sign Out</span>
@@ -103,48 +102,48 @@ function logout() {
         <Dialog v-model:open="passModalOpen">
             <DialogContent class="bg-card border-border">
                 <DialogHeader>
-                    <DialogTitle class="text-white text-xs tracking-[0.3em] uppercase text-center">Update Password</DialogTitle>
+                    <DialogTitle class="text-foreground text-xs tracking-[0.3em] uppercase text-center">Update Password</DialogTitle>
                 </DialogHeader>
 
                 <div
                     v-if="Object.keys(passwordForm.errors).length"
-                    class="w-full px-4 py-2 rounded-lg text-sm text-destructive bg-destructive/10 border border-destructive/20"
+                    class="w-full px-4 py-2 rounded-2xl text-sm text-destructive bg-destructive/10 border border-destructive/20"
                 >
                     {{ Object.values(passwordForm.errors)[0] }}
                 </div>
 
                 <form class="flex flex-col gap-3" @submit.prevent="submitPassword">
-                    <div class="rounded-lg px-4 py-3 bg-secondary border border-border">
+                    <div class="rounded-2xl px-4 py-3 bg-card border border-border">
                         <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Current Password</label>
                         <input
                             v-model="passwordForm.prevPass"
                             type="password"
                             placeholder="••••••••"
-                            class="w-full bg-transparent outline-none text-sm text-white placeholder-border"
+                            class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                         />
                     </div>
-                    <div class="rounded-lg px-4 py-3 bg-secondary border border-border">
+                    <div class="rounded-2xl px-4 py-3 bg-card border border-border">
                         <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">New Password (min 8)</label>
                         <input
                             v-model="passwordForm.newPass"
                             type="password"
                             placeholder="••••••••"
-                            class="w-full bg-transparent outline-none text-sm text-white placeholder-border"
+                            class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                         />
                     </div>
-                    <div class="rounded-lg px-4 py-3 bg-secondary border border-border">
+                    <div class="rounded-2xl px-4 py-3 bg-card border border-border">
                         <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Confirm New Password</label>
                         <input
                             v-model="passwordForm.conPass"
                             type="password"
                             placeholder="••••••••"
-                            class="w-full bg-transparent outline-none text-sm text-white placeholder-border"
+                            class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                         />
                     </div>
                     <button
                         type="submit"
                         :disabled="passwordForm.processing"
-                        class="w-full bg-primary hover:bg-[#00a88a] text-primary-foreground font-bold py-3 rounded-lg tracking-widest uppercase text-xs mt-1 disabled:opacity-70"
+                        class="w-full bg-primary hover:bg-amber-700 text-primary-foreground font-bold py-3 rounded-2xl tracking-widest uppercase text-xs mt-1 disabled:opacity-70"
                     >
                         {{ passwordForm.processing ? 'Updating…' : 'Update Password' }}
                     </button>

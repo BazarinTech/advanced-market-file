@@ -40,15 +40,15 @@ function buy(pkg: Package) {
 </script>
 
 <template>
-    <Head title="Investment Plans" />
+    <Head title="Tasks" />
 
     <AppLayout show-bottom-nav>
         <!-- Top Bar -->
-        <div class="w-full flex items-center h-14 px-4 bg-secondary border-b border-border">
-            <div class="w-7 h-7 rounded bg-primary flex items-center justify-center mr-3">
+        <div class="w-full flex items-center h-14 px-4 bg-card border-b border-border">
+            <div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center mr-3">
                 <Icon name="layer-group" class="text-primary-foreground text-xs" />
             </div>
-            <p class="text-white text-xs font-light tracking-[0.3em] uppercase">Investment Plans</p>
+            <p class="text-foreground text-xs font-light tracking-[0.3em] uppercase">Available Tasks</p>
             <div class="ml-auto text-right">
                 <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Balance</p>
                 <p class="text-primary text-xs font-medium">Kes {{ money(earnings.balance) }}</p>
@@ -56,29 +56,29 @@ function buy(pkg: Package) {
         </div>
 
         <!-- Info strip -->
-        <div class="mx-4 mt-4 rounded-lg px-4 py-3 flex items-start gap-3 bg-card border border-border">
+        <div class="mx-4 mt-4 rounded-2xl px-4 py-3 flex items-start gap-3 bg-card border border-border">
             <Icon name="circle-info" class="text-primary mt-0.5 text-sm" />
             <p class="text-muted-foreground text-xs leading-relaxed">
-                Select a plan to invest. Earnings are claimable daily from <span class="text-primary">9:00 AM</span> each day.
-                Multiple plans can be held simultaneously.
+                Select a task to start. Earnings are claimable daily from <span class="text-primary">9:00 AM</span> each day.
+                Multiple tasks can be running simultaneously.
             </p>
         </div>
 
         <!-- Package cards -->
-        <div class="w-full px-4 mt-4 flex flex-col gap-4 pb-28">
+        <div class="w-full px-4 mt-4 flex flex-col gap-4 pb-32">
             <form v-for="pkg in packages" :key="pkg.id" @submit.prevent="buy(pkg)">
-                <div class="rounded-xl overflow-hidden bg-card border border-border">
+                <div class="rounded-2xl overflow-hidden bg-card border border-border">
                     <!-- Package header -->
                     <div class="relative">
                         <img :src="`/images/packages/${pkg.image}`" class="w-full object-cover" style="height: 120px" :alt="pkg.name" />
                         <div
                             class="absolute inset-0"
-                            style="background: linear-gradient(to bottom, rgba(5, 15, 26, 0.2), rgba(5, 15, 26, 0.85))"
+                            style="background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.85))"
                         ></div>
                         <div class="absolute bottom-0 left-0 right-0 px-4 pb-3 flex items-end justify-between">
                             <p class="text-white font-semibold tracking-widest uppercase text-sm">{{ pkg.name }}</p>
                             <span class="text-[10px] px-2 py-0.5 rounded-full font-medium text-primary-foreground bg-primary">
-                                {{ roi(pkg) }}% ROI
+                                {{ roi(pkg) }}% Reward
                             </span>
                         </div>
                     </div>
@@ -91,7 +91,7 @@ function buy(pkg: Package) {
                             </div>
                             <div class="text-center border-l border-r border-border">
                                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">Daily</p>
-                                <p class="text-white text-sm font-semibold mt-0.5">Kes {{ moneyRound(pkg.daily) }}</p>
+                                <p class="text-foreground text-sm font-semibold mt-0.5">Kes {{ moneyRound(pkg.daily) }}</p>
                             </div>
                             <div class="text-center">
                                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">{{ pkg.days }}d Total</p>
@@ -101,14 +101,14 @@ function buy(pkg: Package) {
                         <button
                             type="submit"
                             :disabled="!canAfford(pkg) || forms[pkg.id].processing"
-                            class="w-full py-3 rounded-lg text-xs font-semibold tracking-widest uppercase transition-opacity disabled:cursor-not-allowed"
+                            class="w-full py-3 rounded-2xl text-xs font-semibold tracking-widest uppercase transition-opacity disabled:cursor-not-allowed"
                             :class="
                                 canAfford(pkg)
-                                    ? 'text-primary-foreground bg-primary hover:bg-[#00a88a] disabled:opacity-70'
+                                    ? 'text-primary-foreground bg-primary hover:bg-amber-700 disabled:opacity-70'
                                     : 'text-muted-foreground cursor-not-allowed'
                             "
                         >
-                            {{ forms[pkg.id].processing ? 'Processing…' : canAfford(pkg) ? 'Activate Plan' : 'Insufficient Balance' }}
+                            {{ forms[pkg.id].processing ? 'Processing…' : canAfford(pkg) ? 'Start Task' : 'Insufficient Balance' }}
                         </button>
                     </div>
                 </div>

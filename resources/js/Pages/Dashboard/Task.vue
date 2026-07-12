@@ -67,26 +67,26 @@ function claim() {
 </script>
 
 <template>
-    <Head title="Orders" />
+    <Head title="My Tasks" />
 
     <AppLayout show-bottom-nav>
         <!-- Top Bar -->
-        <div class="w-full flex items-center justify-center h-14 bg-secondary border-b border-border">
-            <p class="text-white text-xs font-light tracking-[0.3em] uppercase">My Orders</p>
+        <div class="w-full flex items-center justify-center h-14 bg-card border-b border-border">
+            <p class="text-foreground text-xs font-light tracking-[0.3em] uppercase">My Tasks</p>
         </div>
 
-        <div class="flex flex-col items-center w-full px-4 pb-24 mt-4">
+        <div class="flex flex-col items-center w-full px-4 pb-32 mt-4">
             <!-- Claim card -->
-            <form class="w-full rounded-xl p-5 flex flex-col items-center bg-card border border-border" @submit.prevent="claim">
-                <img :src="claimImgSrc" class="w-16 h-16 object-cover mx-auto mb-3 rounded-lg" alt="" />
-                <p class="text-muted-foreground text-center text-xs tracking-wide">Collect your daily earnings from active plans</p>
+            <form class="w-full rounded-2xl p-5 flex flex-col items-center bg-card border border-border" @submit.prevent="claim">
+                <img :src="claimImgSrc" class="w-16 h-16 object-cover mx-auto mb-3 rounded-xl" alt="" />
+                <p class="text-muted-foreground text-center text-xs tracking-wide">Collect your daily rewards from active tasks</p>
                 <button
                     v-if="canClaim"
                     type="submit"
                     :disabled="claimForm.processing"
-                    class="mt-4 w-[75%] bg-primary hover:bg-[#00a88a] text-primary-foreground font-semibold py-2.5 rounded-lg tracking-widest uppercase text-xs flex items-center justify-center gap-2 disabled:opacity-70"
+                    class="mt-4 w-[75%] bg-primary hover:bg-amber-700 text-primary-foreground font-semibold py-2.5 rounded-2xl tracking-widest uppercase text-xs flex items-center justify-center gap-2 disabled:opacity-70"
                 >
-                    <Icon name="bolt" /> {{ claimForm.processing ? 'Claiming…' : 'Claim Earnings' }}
+                    <Icon name="bolt" /> {{ claimForm.processing ? 'Claiming…' : 'Claim Reward' }}
                 </button>
                 <div v-else class="mt-4 text-center">
                     <p class="text-muted-foreground text-[10px] tracking-widest uppercase mb-1">Next claim available</p>
@@ -96,7 +96,7 @@ function claim() {
 
             <!-- Tabs -->
             <Tabs default-value="active" class="w-full mt-4">
-                <TabsList class="w-full h-auto rounded-lg overflow-hidden bg-card border border-border p-0">
+                <TabsList class="w-full h-auto rounded-2xl overflow-hidden bg-card border border-border p-0">
                     <TabsTrigger
                         value="active"
                         class="flex-1 py-2.5 text-xs tracking-widest uppercase font-medium rounded-none data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none text-muted-foreground"
@@ -111,34 +111,34 @@ function claim() {
                     </TabsTrigger>
                 </TabsList>
 
-                <!-- Active Orders -->
+                <!-- Active Tasks -->
                 <TabsContent value="active" class="w-full">
                     <div v-if="activeOrders.length === 0" class="text-center mt-10">
                         <Icon name="layer-group" class="text-border text-4xl mb-3" />
-                        <p class="text-muted-foreground tracking-widest uppercase text-xs">No active plans</p>
+                        <p class="text-muted-foreground tracking-widest uppercase text-xs">No active tasks</p>
                         <Link
                             :href="route('packages')"
-                            class="inline-block mt-3 px-5 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold tracking-widest uppercase no-underline"
+                            class="inline-block mt-3 px-5 py-2 rounded-2xl bg-primary text-primary-foreground text-xs font-semibold tracking-widest uppercase no-underline"
                         >
-                            Browse Plans
+                            Browse Tasks
                         </Link>
                     </div>
                     <div
                         v-for="order in activeOrders"
                         :key="order.ID"
-                        class="w-full mt-3 rounded-xl overflow-hidden bg-card border border-border"
+                        class="w-full mt-3 rounded-2xl overflow-hidden bg-card border border-border"
                     >
                         <div class="flex gap-3 p-3">
-                            <div class="relative w-24 h-20 shrink-0 rounded-lg overflow-hidden">
+                            <div class="relative w-24 h-20 shrink-0 rounded-xl overflow-hidden">
                                 <img :src="packageImage(order)" class="w-full h-full object-cover" :alt="order.package" />
-                                <div class="absolute inset-0" style="background: rgba(5, 15, 26, 0.3)"></div>
+                                <div class="absolute inset-0" style="background: rgba(0, 0, 0, 0.3)"></div>
                             </div>
                             <div class="flex-1 space-y-1">
-                                <p class="text-white font-semibold tracking-widest uppercase text-xs">{{ order.package }}</p>
+                                <p class="text-foreground font-semibold tracking-widest uppercase text-xs">{{ order.package }}</p>
                                 <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
-                                    <span class="text-muted-foreground">Cycle: <span class="text-white">{{ order.cycle }}d</span></span>
+                                    <span class="text-muted-foreground">Cycle: <span class="text-foreground">{{ order.cycle }}d</span></span>
                                     <span class="text-muted-foreground">Daily: <span class="text-primary">Kes {{ moneyRound(order.daily) }}</span></span>
-                                    <span class="text-muted-foreground">Total: <span class="text-white">Kes {{ moneyRound(order.totals) }}</span></span>
+                                    <span class="text-muted-foreground">Total: <span class="text-foreground">Kes {{ moneyRound(order.totals) }}</span></span>
                                     <span class="text-muted-foreground">Earned: <span class="text-success">Kes {{ moneyRound(order.earnings) }}</span></span>
                                 </div>
                                 <p v-if="orderCanClaim(order)" class="text-primary text-[10px] uppercase tracking-widest font-medium">
@@ -161,26 +161,26 @@ function claim() {
                     </div>
                 </TabsContent>
 
-                <!-- Completed Orders -->
+                <!-- Completed Tasks -->
                 <TabsContent value="inactive" class="w-full">
                     <p v-if="completedOrders.length === 0" class="text-muted-foreground text-center mt-10 tracking-widest uppercase text-xs">
-                        No completed orders
+                        No completed tasks
                     </p>
                     <div
                         v-for="order in completedOrders"
                         :key="order.ID"
-                        class="w-full mt-3 rounded-xl overflow-hidden opacity-60 bg-card border border-border"
+                        class="w-full mt-3 rounded-2xl overflow-hidden opacity-60 bg-card border border-border"
                     >
                         <div class="flex gap-3 p-3">
-                            <div class="relative w-24 h-20 shrink-0 rounded-lg overflow-hidden">
+                            <div class="relative w-24 h-20 shrink-0 rounded-xl overflow-hidden">
                                 <img :src="packageImage(order)" class="w-full h-full object-cover grayscale" :alt="order.package" />
                             </div>
                             <div class="flex-1 space-y-1">
-                                <p class="text-white font-semibold tracking-widest uppercase text-xs">{{ order.package }}</p>
+                                <p class="text-foreground font-semibold tracking-widest uppercase text-xs">{{ order.package }}</p>
                                 <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
-                                    <span class="text-muted-foreground">Cycle: <span class="text-white">{{ order.cycle }}d</span></span>
-                                    <span class="text-muted-foreground">Daily: <span class="text-white">Kes {{ moneyRound(order.daily) }}</span></span>
-                                    <span class="text-muted-foreground">Earned: <span class="text-white">Kes {{ moneyRound(order.earnings) }}</span></span>
+                                    <span class="text-muted-foreground">Cycle: <span class="text-foreground">{{ order.cycle }}d</span></span>
+                                    <span class="text-muted-foreground">Daily: <span class="text-foreground">Kes {{ moneyRound(order.daily) }}</span></span>
+                                    <span class="text-muted-foreground">Earned: <span class="text-foreground">Kes {{ moneyRound(order.earnings) }}</span></span>
                                 </div>
                                 <p class="text-success text-[10px] uppercase tracking-widest">● Cycle complete</p>
                             </div>

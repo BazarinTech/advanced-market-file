@@ -29,14 +29,14 @@ function submit() {
 
         <div class="w-full flex flex-col px-4 pb-10 mt-4 gap-4">
             <!-- Balance card -->
-            <div class="rounded-xl p-5 text-center bg-card border border-border">
+            <div class="rounded-2xl p-5 text-center bg-card border border-border">
                 <p class="text-muted-foreground text-[10px] tracking-[0.3em] uppercase mb-1">Available Balance</p>
-                <p class="text-white text-2xl font-light tracking-wide">Kes <span class="font-semibold">{{ money(earnings.balance) }}</span></p>
+                <p class="text-foreground text-2xl font-light tracking-wide">Kes <span class="font-semibold">{{ money(earnings.balance) }}</span></p>
                 <div class="w-10 h-px bg-primary mx-auto mt-3"></div>
             </div>
 
             <!-- Info box -->
-            <div class="rounded-xl px-4 py-3 flex items-start gap-3 bg-card border border-border">
+            <div class="rounded-2xl px-4 py-3 flex items-start gap-3 bg-card border border-border">
                 <Icon name="circle-info" class="text-primary mt-0.5 text-sm shrink-0" />
                 <div class="space-y-1">
                     <p class="text-muted-foreground text-xs">Enter amount and phone number</p>
@@ -46,9 +46,9 @@ function submit() {
             </div>
 
             <!-- Form -->
-            <div class="rounded-xl p-5 bg-card border border-border">
+            <div class="rounded-2xl p-5 bg-card border border-border">
                 <form class="flex flex-col gap-4" @submit.prevent="submit">
-                    <div class="rounded-lg px-4 py-3 bg-secondary border border-border">
+                    <div class="rounded-2xl px-4 py-3 bg-secondary border border-border">
                         <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Amount (KES)</label>
                         <input
                             v-model="form.amount"
@@ -56,24 +56,24 @@ function submit() {
                             step="1"
                             min="400"
                             placeholder="e.g. 1000"
-                            class="w-full bg-transparent outline-none text-sm text-white placeholder-border"
+                            class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                             required
                         />
                     </div>
-                    <div class="rounded-lg px-4 py-3 bg-secondary border border-border">
+                    <div class="rounded-2xl px-4 py-3 bg-secondary border border-border">
                         <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Phone Number</label>
                         <input
                             v-model="form.phone"
                             type="tel"
                             placeholder="07xxxxxxxx"
-                            class="w-full bg-transparent outline-none text-sm text-white placeholder-border"
+                            class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                             required
                         />
                     </div>
                     <button
                         type="submit"
                         :disabled="form.processing"
-                        class="w-full bg-primary hover:bg-[#00a88a] text-primary-foreground font-bold py-3.5 rounded-lg tracking-widest uppercase text-xs flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                        class="w-full bg-primary hover:bg-amber-700 text-primary-foreground font-bold py-3.5 rounded-2xl tracking-widest uppercase text-xs flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
                     >
                         {{ form.processing ? 'Processing…' : 'Submit Deposit' }}
                     </button>
