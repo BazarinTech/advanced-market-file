@@ -55,15 +55,6 @@ function buy(pkg: Package) {
             </div>
         </div>
 
-        <!-- Info strip -->
-        <div class="mx-4 mt-4 rounded-2xl px-4 py-3 flex items-start gap-3 bg-card border border-border">
-            <Icon name="circle-info" class="text-primary mt-0.5 text-sm" />
-            <p class="text-muted-foreground text-xs leading-relaxed">
-                Select a task to start. Earnings are claimable daily from <span class="text-primary">9:00 AM</span> each day.
-                Multiple tasks can be running simultaneously.
-            </p>
-        </div>
-
         <!-- Package cards -->
         <div class="w-full px-4 mt-4 flex flex-col gap-4 pb-32">
             <form v-for="pkg in packages" :key="pkg.id" @submit.prevent="buy(pkg)">
