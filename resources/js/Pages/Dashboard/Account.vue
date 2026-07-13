@@ -130,7 +130,7 @@ const headerStyle =
         </div>
 
         <!-- Wallet sheet -->
-        <div class="w-full flex-1 -mt-5 rounded-t-3xl bg-card border-t border-border px-5 pt-5 pb-32">
+        <div class="w-full flex-1 -mt-5 rounded-t-3xl bg-card border-t border-border px-5 pt-8 pb-32">
             <!-- Wallet summary row -->
             <div class="w-full flex items-center justify-between bg-secondary rounded-2xl px-4 py-3.5">
                 <div class="flex items-center gap-3">
