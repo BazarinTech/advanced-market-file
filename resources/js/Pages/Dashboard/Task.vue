@@ -83,7 +83,7 @@ function fetchQuestion() {
     questionState.value = 'loading';
     questionError.value = '';
     question.value = '';
-    answerForm.reset('answer');
+    answerForm.answer = '';
     answerForm.clearErrors();
 
     axios
@@ -91,6 +91,10 @@ function fetchQuestion() {
         .then((res) => {
             question.value = res.data.question;
             questionState.value = 'ready';
+            // Inertia re-snapshots form "defaults" from the just-submitted data right after
+            // the post's onSuccess callback returns, which can restore the old answer text
+            // by the time this resolves — clear it again once the field is actually shown.
+            answerForm.answer = '';
         })
         .catch((err) => {
             questionError.value = err.response?.data?.message ?? 'Could not load your task right now.';
@@ -116,6 +120,7 @@ function submitAnswer() {
             } else {
                 modalOpen.value = false;
                 claimingOrder.value = null;
+                answerForm.answer = '';
             }
         },
     });
