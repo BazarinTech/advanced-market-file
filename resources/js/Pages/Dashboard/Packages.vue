@@ -84,8 +84,8 @@ function buy(pkg: Package) {
                                 <p class="text-foreground text-sm font-semibold mt-0.5">{{ moneyRound(pkg.daily) }}</p>
                             </div>
                             <div class="text-center">
-                                <p class="text-muted-foreground text-[9px] tracking-widest uppercase">{{ pkg.days }}d Total</p>
-                                <p class="text-success text-sm font-semibold mt-0.5">{{ moneyRound(Number(pkg.daily) * pkg.days) }}</p>
+                                <p class="text-muted-foreground text-[9px] tracking-widest uppercase">Per Month</p>
+                                <p class="text-success text-sm font-semibold mt-0.5">{{ moneyRound(Number(pkg.daily) * pkg.days) }}/mo</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 mb-4 text-[10px] text-muted-foreground">
