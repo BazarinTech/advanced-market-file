@@ -7,7 +7,6 @@ import {
     Notification03Icon,
     ViewIcon,
     ViewOffIcon,
-    ArrowDown01Icon,
     MoneyAdd02Icon,
     MoneySend02Icon,
     Task01Icon,
@@ -132,13 +131,15 @@ const headerStyle =
 
         <!-- Wallet sheet -->
         <div class="w-full flex-1 -mt-5 rounded-t-3xl bg-card border-t border-border px-5 pt-5 pb-32">
-            <!-- Wallet selector row -->
+            <!-- Wallet summary row -->
             <div class="flex items-center justify-between">
-                <div class="flex items-center gap-1.5 bg-secondary rounded-full pl-4 pr-3 py-2">
+                <div class="bg-secondary rounded-full px-4 py-2">
                     <span class="text-foreground text-sm font-medium">Primary Wallet</span>
-                    <HugeiconsIcon :icon="ArrowDown01Icon" :size="16" color="currentColor" class="text-muted-foreground" :stroke-width="2" />
                 </div>
-                <p class="text-foreground text-lg font-bold">KES {{ money(earnings.balance) }}</p>
+                <div class="text-right leading-tight">
+                    <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Total Withdrawn</p>
+                    <p class="text-foreground text-lg font-bold mt-0.5">KES {{ money(earnings.withdraw) }}</p>
+                </div>
             </div>
 
             <div class="border-t border-border mt-4 mb-5"></div>
