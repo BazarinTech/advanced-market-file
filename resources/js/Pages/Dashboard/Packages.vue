@@ -2,6 +2,7 @@
 import { Head, usePage, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import Icon from '@/components/Icon.vue';
+import { useCurrency } from '@/composables/useCurrency';
 import type { Package } from '@/types/models';
 
 const props = defineProps<{
@@ -12,18 +13,12 @@ const page = usePage();
 const earnings = page.props.auth.user!.earnings!;
 const balance = Number(earnings.balance);
 
+const { money, moneyRound } = useCurrency();
+
 function roi(pkg: Package): number {
     const amount = Number(pkg.amount);
     if (amount <= 0) return 0;
     return Math.round((Number(pkg.daily) * pkg.days / amount) * 100);
-}
-
-function money(v: string | number) {
-    return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function moneyRound(v: string | number) {
-    return Math.round(Number(v)).toLocaleString('en-US');
 }
 
 function canAfford(pkg: Package): boolean {
@@ -51,7 +46,7 @@ function buy(pkg: Package) {
             <p class="text-foreground text-xs font-light tracking-[0.3em] uppercase">Task Plans</p>
             <div class="ml-auto text-right">
                 <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Balance</p>
-                <p class="text-primary text-xs font-medium">Kes {{ money(earnings.balance) }}</p>
+                <p class="text-primary text-xs font-medium">{{ money(earnings.balance) }}</p>
             </div>
         </div>
 
@@ -78,15 +73,15 @@ function buy(pkg: Package) {
                         <div class="grid grid-cols-3 gap-3 mb-4">
                             <div class="text-center">
                                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">Price</p>
-                                <p class="text-primary text-sm font-semibold mt-0.5">Kes {{ moneyRound(pkg.amount) }}</p>
+                                <p class="text-primary text-sm font-semibold mt-0.5">{{ moneyRound(pkg.amount) }}</p>
                             </div>
                             <div class="text-center border-l border-r border-border">
                                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">Daily</p>
-                                <p class="text-foreground text-sm font-semibold mt-0.5">Kes {{ moneyRound(pkg.daily) }}</p>
+                                <p class="text-foreground text-sm font-semibold mt-0.5">{{ moneyRound(pkg.daily) }}</p>
                             </div>
                             <div class="text-center">
                                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">{{ pkg.days }}d Total</p>
-                                <p class="text-success text-sm font-semibold mt-0.5">Kes {{ moneyRound(Number(pkg.daily) * pkg.days) }}</p>
+                                <p class="text-success text-sm font-semibold mt-0.5">{{ moneyRound(Number(pkg.daily) * pkg.days) }}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 mb-4 text-[10px] text-muted-foreground">

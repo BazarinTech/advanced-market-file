@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Earning;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\ReferralService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 class PaymentCallbackController extends Controller
 {
     private const FAILED_STATUSES = ['FAILED', 'CANCELLED', 'EXPIRED'];
+
+    public function __construct(private ReferralService $referralService) {}
 
     public function handle(Request $request)
     {
@@ -112,27 +115,7 @@ class PaymentCallbackController extends Controller
 
             User::where('email', $email)->update(['status' => 'Active']);
 
-            // 10% referral commission to sponsor
-            $user = User::where('email', $email)->first();
-            if ($user && $user->refer) {
-                $sponsor = User::find($user->refer);
-                if ($sponsor && $sponsor->earnings) {
-                    $commission = $amount * 0.10;
-                    $sponsor->earnings->balance  += $commission;
-                    $sponsor->earnings->referral += $commission;
-                    $sponsor->earnings->save();
-
-                    Transaction::create([
-                        'email'     => $sponsor->email,
-                        'phone'     => $sponsor->phone,
-                        'amount'    => $commission,
-                        'type'      => 'Referral',
-                        'status'    => 'Success',
-                        'details'   => 'Commission from ' . $email,
-                        'RecAmount' => $commission,
-                    ]);
-                }
-            }
+            $this->referralService->payCommission($email, $amount);
         });
 
         Log::info('STK Callback: deposit processed', [

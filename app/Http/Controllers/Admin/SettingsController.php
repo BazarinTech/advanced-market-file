@@ -21,6 +21,8 @@ class SettingsController extends Controller
             'link_customer_support'=> Setting::get('link_customer_support'),
             'link_download_app'    => Setting::get('link_download_app'),
             'logo'                 => Setting::get('logo'),
+            'usd_kes_rate'         => Setting::get('usd_kes_rate', 130),
+            'crypto_deposit_address' => Setting::get('crypto_deposit_address'),
         ]);
     }
 
@@ -29,12 +31,25 @@ class SettingsController extends Controller
         $request->validate([
             'withdrawal_min' => 'required|numeric|min:1',
             'withdrawal_fee' => 'required|numeric|min:0|max:100',
+            'usd_kes_rate'   => 'required|numeric|min:1',
         ]);
 
         Setting::set('withdrawal_min', $request->withdrawal_min);
         Setting::set('withdrawal_fee', $request->withdrawal_fee);
+        Setting::set('usd_kes_rate', $request->usd_kes_rate);
 
         return back()->with('success_withdrawal', 'Withdrawal settings saved.');
+    }
+
+    public function updateCrypto(Request $request)
+    {
+        $request->validate([
+            'crypto_deposit_address' => 'required|string|max:100',
+        ]);
+
+        Setting::set('crypto_deposit_address', $request->crypto_deposit_address);
+
+        return back()->with('success_crypto', 'Crypto deposit address saved.');
     }
 
     public function updateBanner(Request $request)

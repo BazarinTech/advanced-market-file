@@ -83,6 +83,7 @@ class DashboardController extends Controller
             'last_claimed_at' => null,
             'tasks_per_day'   => $pkg->tasks_per_day,
             'task_category'   => $pkg->task_category,
+            'fx_rate'         => Setting::get('usd_kes_rate', 130),
         ]);
 
         $earnings->balance -= $pkg->amount;
@@ -149,6 +150,8 @@ class DashboardController extends Controller
     public function packagesTable()
     {
         $packages = Package::orderBy('amount')->get();
-        return Inertia::render('Dashboard/Table', compact('packages'));
+        $withdrawal_min = (float) Setting::get('withdrawal_min', 50);
+
+        return Inertia::render('Dashboard/Table', compact('packages', 'withdrawal_min'));
     }
 }

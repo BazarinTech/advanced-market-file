@@ -10,6 +10,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WithdrawController;
+use App\Http\Controllers\WithdrawalWalletController;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\CouponController;
 use Illuminate\Support\Facades\Route;
@@ -76,7 +77,9 @@ Route::middleware(['auth', 'phone.verified'])->group(function () {
 
     Route::get('/withdraw',        [WithdrawController::class, 'show'])->name('withdraw');
     Route::post('/withdraw',       [WithdrawController::class, 'store'])->name('withdraw.store');
-    Route::post('/withdraw/setup', [WithdrawController::class, 'setupAccount'])->name('withdraw.setup');
+
+    Route::post('/withdraw/account/send-code', [WithdrawalWalletController::class, 'sendCode'])->name('withdraw.account.send-code')->middleware('throttle:5,1');
+    Route::post('/withdraw/account',           [WithdrawalWalletController::class, 'update'])->name('withdraw.account.update');
 
     Route::get('/coupon',  [CouponController::class, 'show'])->name('coupon');
     Route::post('/coupon', [CouponController::class, 'redeem'])->name('coupon.redeem');
@@ -95,6 +98,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/users/{id}/reset-password',  [Admin\UserController::class, 'resetPassword'])->name('users.reset-password');
     Route::get('/deposits',                    [Admin\TransactionController::class, 'deposits'])->name('deposits');
     Route::post('/deposits',                   [Admin\TransactionController::class, 'manualDeposit'])->name('deposits.store');
+    Route::post('/deposits/{id}/approve',      [Admin\TransactionController::class, 'approveDeposit'])->name('deposits.approve');
+    Route::post('/deposits/{id}/reject',       [Admin\TransactionController::class, 'rejectDeposit'])->name('deposits.reject');
     Route::get('/withdrawals',                 [Admin\TransactionController::class, 'withdrawals'])->name('withdrawals');
     Route::post('/withdrawals/{id}/approve',   [Admin\TransactionController::class, 'approveWithdrawal'])->name('withdrawals.approve');
     Route::post('/withdrawals/{id}/reject',    [Admin\TransactionController::class, 'rejectWithdrawal'])->name('withdrawals.reject');
@@ -108,6 +113,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/settings/claim-image', [SettingsController::class, 'updateClaimImage'])->name('settings.claim-image');
     Route::post('/settings/links',       [SettingsController::class, 'updateLinks'])->name('settings.links');
     Route::post('/settings/logo',        [SettingsController::class, 'updateLogo'])->name('settings.logo');
+    Route::post('/settings/crypto',      [SettingsController::class, 'updateCrypto'])->name('settings.crypto');
 
     Route::get('/wallets',         [WalletController::class, 'index'])->name('wallets');
     Route::get('/wallets/{wallet}', [WalletController::class, 'edit'])->name('wallets.edit');

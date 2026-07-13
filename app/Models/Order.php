@@ -14,7 +14,7 @@ class Order extends Model
     protected $fillable = [
         'email', 'package', 'daily', 'totals', 'price',
         'status', 'cycle', 'amount', 'earnings', 'last_claimed_at',
-        'tasks_per_day', 'task_category', 'tasks_claimed_today',
+        'tasks_per_day', 'task_category', 'tasks_claimed_today', 'fx_rate',
     ];
 
     protected $casts = [
@@ -23,6 +23,7 @@ class Order extends Model
         'price'           => 'decimal:2',
         'amount'          => 'decimal:2',
         'earnings'        => 'decimal:2',
+        'fx_rate'         => 'decimal:4',
         'last_claimed_at' => 'datetime',
     ];
 

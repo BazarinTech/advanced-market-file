@@ -18,15 +18,16 @@ class WithdrawalAccountController extends Controller
 
     public function update(Request $request, WithdrawalAccount $account)
     {
-        $request->validate([
-            'name'  => 'required|string|max:100',
-            'phone' => 'required|string|max:20',
-        ]);
-
-        $account->update([
-            'name'  => $request->name,
-            'phone' => $request->phone,
-        ]);
+        if ($account->method === 'crypto') {
+            $request->validate(['crypto_address' => 'required|string|max:64']);
+            $account->update(['crypto_address' => $request->crypto_address]);
+        } else {
+            $request->validate([
+                'name'  => 'required|string|max:100',
+                'phone' => 'required|string|max:20',
+            ]);
+            $account->update(['name' => $request->name, 'phone' => $request->phone]);
+        }
 
         return back()->with('success', 'Withdrawal account updated successfully.');
     }

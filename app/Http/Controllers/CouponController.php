@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Coupon;
 use App\Models\CouponUse;
+use App\Models\Setting;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -65,6 +66,8 @@ class CouponController extends Controller
             'details'   => 'Coupon: ' . $coupon->code,
         ]);
 
-        return back()->with('success', 'Coupon redeemed! Kes ' . number_format($coupon->amount, 2) . ' added to your balance.');
+        $rate = (float) Setting::get('usd_kes_rate', 130);
+
+        return back()->with('success', 'Coupon redeemed! $' . number_format($coupon->amount / $rate, 2) . ' added to your balance.');
     }
 }

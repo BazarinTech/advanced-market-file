@@ -34,9 +34,10 @@ function reject(id: number) {
                         <th class="px-3 py-3">#</th>
                         <th class="px-3 py-3">ID</th>
                         <th class="px-3 py-3">Email</th>
+                        <th class="px-3 py-3">Method</th>
                         <th class="px-3 py-3">Amount</th>
                         <th class="px-3 py-3">Rec. Amount</th>
-                        <th class="px-3 py-3">Phone</th>
+                        <th class="px-3 py-3">Destination</th>
                         <th class="px-3 py-3">Status</th>
                         <th class="px-3 py-3">Date</th>
                         <th class="px-3 py-3">Actions</th>
@@ -47,9 +48,10 @@ function reject(id: number) {
                         <td class="px-3 py-2">{{ i + 1 }}</td>
                         <td class="px-3 py-2">{{ w.ID }}</td>
                         <td class="px-3 py-2">{{ w.email }}</td>
+                        <td class="px-3 py-2 uppercase text-xs font-semibold" :class="w.method === 'crypto' ? 'text-teal-600' : 'text-blue-600'">{{ w.method ?? 'mpesa' }}</td>
                         <td class="px-3 py-2">{{ money(w.amount) }}</td>
                         <td class="px-3 py-2">{{ money(w.RecAmount) }}</td>
-                        <td class="px-3 py-2">{{ w.phone }}</td>
+                        <td class="px-3 py-2 font-mono text-xs break-all max-w-40">{{ w.method === 'crypto' ? w.payout_address : w.phone }}</td>
                         <td class="px-3 py-2 font-semibold" :class="['Success', 'Approved'].includes(w.status) ? 'text-green-600' : 'text-red-500'">
                             {{ w.status }}
                         </td>
@@ -67,7 +69,7 @@ function reject(id: number) {
                         </td>
                     </tr>
                     <tr v-if="withdrawals.data.length === 0">
-                        <td colspan="9" class="px-3 py-4 text-center text-gray-400">No withdrawals found</td>
+                        <td colspan="10" class="px-3 py-4 text-center text-gray-400">No withdrawals found</td>
                     </tr>
                 </tbody>
             </table>

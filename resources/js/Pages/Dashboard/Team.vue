@@ -4,6 +4,7 @@ import { Head, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import Icon from '@/components/Icon.vue';
+import { useCurrency } from '@/composables/useCurrency';
 import type { User } from '@/types/models';
 
 const props = defineProps<{
@@ -17,13 +18,7 @@ const page = usePage();
 const user = page.props.auth.user!;
 const earnings = user.earnings!;
 
-function money(v: string | number) {
-    return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function moneyRound(v: string | number) {
-    return Math.round(Number(v)).toLocaleString('en-US');
-}
+const { money, moneyRound } = useCurrency();
 
 function maskPhone(phone: string): string {
     return phone.slice(0, 2) + '***' + phone.slice(-2);
@@ -70,7 +65,7 @@ async function copyInviteLink() {
         <div class="w-full grid grid-cols-2 border-b border-border">
             <div class="flex flex-col gap-1 items-center py-4 border-r border-b border-border bg-card">
                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">Referral Bonus</p>
-                <p class="text-primary text-sm font-semibold">Kes {{ money(earnings.referral) }}</p>
+                <p class="text-primary text-sm font-semibold">{{ money(earnings.referral) }}</p>
             </div>
             <div class="flex flex-col gap-1 items-center py-4 border-b border-border bg-card">
                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">Total Members</p>
@@ -138,7 +133,7 @@ async function copyInviteLink() {
                 </div>
                 <div class="text-center">
                     <p class="text-muted-foreground text-[9px] tracking-widest uppercase mb-0.5">Deposited</p>
-                    <p class="text-foreground text-sm font-semibold">Kes {{ moneyRound(depositTotals[member.email] ?? 0) }}</p>
+                    <p class="text-foreground text-sm font-semibold">{{ moneyRound(depositTotals[member.email] ?? 0) }}</p>
                 </div>
                 <div class="text-right">
                     <p class="text-muted-foreground text-[10px]">{{ member.date }}</p>

@@ -54,8 +54,10 @@ class HandleInertiaRequests extends Middleware
                 'success_links' => fn () => $request->session()->get('success_links'),
                 'success_claim_image' => fn () => $request->session()->get('success_claim_image'),
                 'success_logo' => fn () => $request->session()->get('success_logo'),
+                'success_crypto' => fn () => $request->session()->get('success_crypto'),
             ],
             'platformLogo' => fn () => Setting::get('logo'),
+            'usdRate' => fn () => (float) Setting::get('usd_kes_rate', 130),
         ];
     }
 }

@@ -16,12 +16,17 @@ const editingId = ref<number | null>(null);
 const editForm = useForm({
     name: '',
     phone: '',
+    crypto_address: '',
 });
+
+const editingMethod = ref<'mpesa' | 'crypto'>('mpesa');
 
 function openEdit(account: WithdrawalAccount) {
     editingId.value = account.id;
-    editForm.name = account.name;
-    editForm.phone = account.phone;
+    editingMethod.value = account.method;
+    editForm.name = account.name ?? '';
+    editForm.phone = account.phone ?? '';
+    editForm.crypto_address = account.crypto_address ?? '';
     editForm.clearErrors();
     editOpen.value = true;
 }
@@ -63,8 +68,9 @@ function timeAgo(value?: string | null) {
                     <tr>
                         <th class="px-4 py-3 text-left">#</th>
                         <th class="px-4 py-3 text-left">Email</th>
+                        <th class="px-4 py-3 text-left">Method</th>
                         <th class="px-4 py-3 text-left">Name</th>
-                        <th class="px-4 py-3 text-left">Phone</th>
+                        <th class="px-4 py-3 text-left">Phone / Address</th>
                         <th class="px-4 py-3 text-left">Last Updated</th>
                         <th class="px-4 py-3 text-left">Actions</th>
                     </tr>
@@ -73,8 +79,9 @@ function timeAgo(value?: string | null) {
                     <tr v-for="(account, i) in accounts.data" :key="account.id" class="hover:bg-gray-50">
                         <td class="px-4 py-3 text-gray-400">{{ i + 1 }}</td>
                         <td class="px-4 py-3 text-gray-700">{{ account.email }}</td>
-                        <td class="px-4 py-3 font-semibold text-gray-800">{{ account.name }}</td>
-                        <td class="px-4 py-3 text-green-600 font-semibold">{{ account.phone }}</td>
+                        <td class="px-4 py-3 uppercase text-xs font-semibold" :class="account.method === 'crypto' ? 'text-teal-600' : 'text-blue-600'">{{ account.method }}</td>
+                        <td class="px-4 py-3 font-semibold text-gray-800">{{ account.name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-green-600 font-semibold font-mono text-xs break-all">{{ account.method === 'crypto' ? account.crypto_address : account.phone }}</td>
                         <td class="px-4 py-3 text-gray-400 text-xs">{{ timeAgo(account.updated_at) }}</td>
                         <td class="px-4 py-3">
                             <button
@@ -86,7 +93,7 @@ function timeAgo(value?: string | null) {
                         </td>
                     </tr>
                     <tr v-if="accounts.data.length === 0">
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-400">No withdrawal accounts found.</td>
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-400">No withdrawal accounts found.</td>
                     </tr>
                 </tbody>
             </table>
@@ -100,25 +107,37 @@ function timeAgo(value?: string | null) {
                     <DialogTitle>Edit Withdrawal Account</DialogTitle>
                 </DialogHeader>
                 <form class="flex flex-col gap-4" @submit.prevent="submitEdit">
-                    <div>
-                        <label class="text-xs text-gray-500 mb-1 block">Full Name (as on M-Pesa)</label>
+                    <template v-if="editingMethod === 'mpesa'">
+                        <div>
+                            <label class="text-xs text-gray-500 mb-1 block">Full Name (as on M-Pesa)</label>
+                            <input
+                                v-model="editForm.name"
+                                type="text"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                                required
+                            >
+                            <p v-if="editForm.errors.name" class="text-xs text-red-500 mt-1">{{ editForm.errors.name }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 mb-1 block">M-Pesa Phone Number</label>
+                            <input
+                                v-model="editForm.phone"
+                                type="tel"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                                required
+                            >
+                            <p v-if="editForm.errors.phone" class="text-xs text-red-500 mt-1">{{ editForm.errors.phone }}</p>
+                        </div>
+                    </template>
+                    <div v-else>
+                        <label class="text-xs text-gray-500 mb-1 block">USDT-TRC20 Address</label>
                         <input
-                            v-model="editForm.name"
+                            v-model="editForm.crypto_address"
                             type="text"
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-blue-500"
                             required
                         >
-                        <p v-if="editForm.errors.name" class="text-xs text-red-500 mt-1">{{ editForm.errors.name }}</p>
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-500 mb-1 block">M-Pesa Phone Number</label>
-                        <input
-                            v-model="editForm.phone"
-                            type="tel"
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                            required
-                        >
-                        <p v-if="editForm.errors.phone" class="text-xs text-red-500 mt-1">{{ editForm.errors.phone }}</p>
+                        <p v-if="editForm.errors.crypto_address" class="text-xs text-red-500 mt-1">{{ editForm.errors.crypto_address }}</p>
                     </div>
                     <div class="flex gap-3 mt-2">
                         <button

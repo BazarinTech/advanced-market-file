@@ -6,6 +6,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import Icon from '@/components/Icon.vue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useCurrency } from '@/composables/useCurrency';
 import type { Order } from '@/types/models';
 
 const props = defineProps<{
@@ -15,10 +16,7 @@ const props = defineProps<{
 }>();
 
 const page = usePage();
-
-function moneyRound(v: string | number) {
-    return Math.round(Number(v)).toLocaleString('en-US');
-}
+const { moneyRound } = useCurrency();
 
 // Mirrors Order::claimWindowFor()/tasksClaimedToday()/nextClaimAt() on the backend:
 // each day's batch of `tasks_per_day` tasks unlocks at 9:00 AM and stays open for 24h.
@@ -188,9 +186,9 @@ function submitAnswer() {
                                 <p class="text-foreground font-semibold tracking-widest uppercase text-xs">{{ order.package }}</p>
                                 <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
                                     <span class="text-muted-foreground">Cycle: <span class="text-foreground">{{ order.cycle }}d</span></span>
-                                    <span class="text-muted-foreground">Daily: <span class="text-primary">Kes {{ moneyRound(order.daily) }}</span></span>
-                                    <span class="text-muted-foreground">Total: <span class="text-foreground">Kes {{ moneyRound(order.totals) }}</span></span>
-                                    <span class="text-muted-foreground">Earned: <span class="text-success">Kes {{ moneyRound(order.earnings) }}</span></span>
+                                    <span class="text-muted-foreground">Daily: <span class="text-primary">{{ moneyRound(order.daily) }}</span></span>
+                                    <span class="text-muted-foreground">Total: <span class="text-foreground">{{ moneyRound(order.totals) }}</span></span>
+                                    <span class="text-muted-foreground">Earned: <span class="text-success">{{ moneyRound(order.earnings) }}</span></span>
                                 </div>
                                 <p v-if="orderCanClaim(order)" class="text-primary text-[10px] uppercase tracking-widest font-medium">
                                     {{ tasksClaimedToday(order) }}/{{ order.tasks_per_day }} tasks done today
@@ -240,8 +238,8 @@ function submitAnswer() {
                                 <p class="text-foreground font-semibold tracking-widest uppercase text-xs">{{ order.package }}</p>
                                 <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
                                     <span class="text-muted-foreground">Cycle: <span class="text-foreground">{{ order.cycle }}d</span></span>
-                                    <span class="text-muted-foreground">Daily: <span class="text-foreground">Kes {{ moneyRound(order.daily) }}</span></span>
-                                    <span class="text-muted-foreground">Earned: <span class="text-foreground">Kes {{ moneyRound(order.earnings) }}</span></span>
+                                    <span class="text-muted-foreground">Daily: <span class="text-foreground">{{ moneyRound(order.daily) }}</span></span>
+                                    <span class="text-muted-foreground">Earned: <span class="text-foreground">{{ moneyRound(order.earnings) }}</span></span>
                                 </div>
                                 <p class="text-success text-[10px] uppercase tracking-widest">● Cycle complete</p>
                             </div>

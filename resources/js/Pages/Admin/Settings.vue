@@ -13,6 +13,8 @@ const props = defineProps<{
     link_customer_support: string | null;
     link_download_app: string | null;
     logo: string | null;
+    usd_kes_rate: number;
+    crypto_deposit_address: string | null;
 }>();
 
 // ── Platform logo ──
@@ -36,10 +38,20 @@ function submitLogo() {
 const withdrawalForm = useForm({
     withdrawal_min: props.withdrawal_min,
     withdrawal_fee: props.withdrawal_fee,
+    usd_kes_rate: props.usd_kes_rate,
 });
 
 function submitWithdrawal() {
     withdrawalForm.post(route('admin.settings.update'));
+}
+
+// ── Crypto deposit address ──
+const cryptoForm = useForm({
+    crypto_deposit_address: props.crypto_deposit_address ?? '',
+});
+
+function submitCrypto() {
+    cryptoForm.post(route('admin.settings.crypto'));
 }
 
 // ── Home page banner ──
@@ -177,6 +189,20 @@ function submitLinks() {
                         <p v-if="withdrawalForm.errors.withdrawal_fee" class="text-xs text-red-500 mt-1">{{ withdrawalForm.errors.withdrawal_fee }}</p>
                     </div>
 
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">USD Exchange Rate (1 USD = ? KES)</label>
+                        <input
+                            v-model.number="withdrawalForm.usd_kes_rate"
+                            type="number"
+                            min="1"
+                            step="0.01"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                            required
+                        >
+                        <p class="text-xs text-gray-400 mt-1">All user-facing balances/prices are shown in USD using this rate. The admin panel always shows raw KES.</p>
+                        <p v-if="withdrawalForm.errors.usd_kes_rate" class="text-xs text-red-500 mt-1">{{ withdrawalForm.errors.usd_kes_rate }}</p>
+                    </div>
+
                     <div class="pt-2 border-t border-gray-100">
                         <button
                             type="submit"
@@ -184,6 +210,39 @@ function submitLinks() {
                             class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg text-sm disabled:opacity-60"
                         >
                             Save Withdrawal Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Section 1b: Crypto Deposit Address -->
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100">
+                    <div class="w-1 h-5 bg-teal-500 rounded"></div>
+                    <h2 class="text-base font-semibold text-gray-700">Crypto Deposit Address (USDT-TRC20)</h2>
+                </div>
+
+                <form class="flex flex-col gap-4" @submit.prevent="submitCrypto">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Receiving Address</label>
+                        <input
+                            v-model="cryptoForm.crypto_deposit_address"
+                            type="text"
+                            placeholder="T..."
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-teal-500"
+                            required
+                        >
+                        <p class="text-xs text-gray-400 mt-1">Shown to users on the Deposit page for USDT-TRC20 transfers. Must be a TRC20 network address.</p>
+                        <p v-if="cryptoForm.errors.crypto_deposit_address" class="text-xs text-red-500 mt-1">{{ cryptoForm.errors.crypto_deposit_address }}</p>
+                    </div>
+
+                    <div class="pt-2 border-t border-gray-100">
+                        <button
+                            type="submit"
+                            :disabled="cryptoForm.processing"
+                            class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-6 py-2 rounded-lg text-sm disabled:opacity-60"
+                        >
+                            Save Crypto Address
                         </button>
                     </div>
                 </form>

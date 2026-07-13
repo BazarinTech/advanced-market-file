@@ -10,6 +10,7 @@ const SUCCESS_KEYS: (keyof Flash)[] = [
     'success_links',
     'success_claim_image',
     'success_logo',
+    'success_crypto',
 ];
 
 export function useFlashToasts() {

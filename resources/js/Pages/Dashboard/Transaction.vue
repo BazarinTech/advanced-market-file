@@ -3,11 +3,14 @@ import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import Icon from '@/components/Icon.vue';
+import { useCurrency } from '@/composables/useCurrency';
 import type { Transaction } from '@/types/models';
 
 defineProps<{
     transactions: Transaction[];
 }>();
+
+const { money } = useCurrency();
 
 const CREDIT_TYPES: Transaction['type'][] = ['Deposit', 'Deposits', 'Referral'];
 
@@ -19,10 +22,6 @@ function statusClass(status: Transaction['status']): string {
     if (status === 'Success' || status === 'Approved') return 'text-primary';
     if (status === 'Pending') return 'text-warning';
     return 'text-destructive';
-}
-
-function money(v: string | number) {
-    return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 </script>
 
@@ -56,7 +55,7 @@ function money(v: string | number) {
                 </div>
                 <div class="text-right">
                     <p class="text-sm font-semibold" :class="isCredit(tx) ? 'text-success' : 'text-destructive'">
-                        {{ isCredit(tx) ? '+' : '-' }}Kes {{ money(tx.amount) }}
+                        {{ isCredit(tx) ? '+' : '-' }}{{ money(tx.amount) }}
                     </p>
                     <p class="text-muted-foreground text-[10px] mt-0.5">{{ tx.date }}</p>
                 </div>

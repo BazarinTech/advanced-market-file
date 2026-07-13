@@ -22,6 +22,7 @@ import {
     Download04Icon,
     Logout02Icon,
 } from '@hugeicons/core-free-icons';
+import { useCurrency } from '@/composables/useCurrency';
 
 const props = defineProps<{
     downline: number;
@@ -36,11 +37,9 @@ const page = usePage();
 const user = page.props.auth.user!;
 const earnings = user.earnings!;
 
-const hideBalance = ref(false);
+const { money } = useCurrency();
 
-function money(v: string | number) {
-    return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
+const hideBalance = ref(false);
 
 const logoutForm = useForm({});
 function logout() {
@@ -115,7 +114,6 @@ const headerStyle =
                 <p class="text-white/70 text-[11px] tracking-[0.25em] uppercase">Available Balance</p>
                 <div class="flex items-center justify-center gap-3 mt-1">
                     <p class="text-white text-4xl font-bold tracking-tight">
-                        <span class="text-xl font-medium align-middle mr-1">KES</span>
                         <span v-if="!hideBalance">{{ money(earnings.balance) }}</span>
                         <span v-else>••••••</span>
                     </p>
@@ -139,7 +137,7 @@ const headerStyle =
                     </div>
                     <span class="text-muted-foreground text-xs font-medium tracking-wide">Total Withdrawn</span>
                 </div>
-                <span class="text-foreground text-base font-bold">KES {{ money(earnings.withdraw) }}</span>
+                <span class="text-foreground text-base font-bold">{{ money(earnings.withdraw) }}</span>
             </div>
 
             <div class="border-t border-border mt-5 mb-5"></div>

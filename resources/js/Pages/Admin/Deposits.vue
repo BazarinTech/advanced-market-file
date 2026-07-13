@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import Pagination from '@/components/Pagination.vue';
 import type { PaginatedResponse, Transaction } from '@/types/models';
@@ -19,6 +19,14 @@ function submit() {
     form.post(route('admin.deposits.store'), {
         onSuccess: () => form.reset(),
     });
+}
+
+function approve(id: number) {
+    router.post(route('admin.deposits.approve', id));
+}
+
+function reject(id: number) {
+    router.post(route('admin.deposits.reject', id));
 }
 </script>
 
@@ -92,10 +100,12 @@ function submit() {
                         <th class="px-3 py-3">#</th>
                         <th class="px-3 py-3">ID</th>
                         <th class="px-3 py-3">Email</th>
+                        <th class="px-3 py-3">Method</th>
                         <th class="px-3 py-3">Amount</th>
                         <th class="px-3 py-3">Status</th>
                         <th class="px-3 py-3">Phone</th>
                         <th class="px-3 py-3">Date</th>
+                        <th class="px-3 py-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -103,13 +113,24 @@ function submit() {
                         <td class="px-3 py-2">{{ i + 1 }}</td>
                         <td class="px-3 py-2">{{ d.ID }}</td>
                         <td class="px-3 py-2">{{ d.email }}</td>
+                        <td class="px-3 py-2 uppercase text-xs font-semibold" :class="d.method === 'crypto' ? 'text-teal-600' : 'text-blue-600'">{{ d.method ?? 'mpesa' }}</td>
                         <td class="px-3 py-2">Kes {{ Number(d.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</td>
-                        <td class="px-3 py-2 font-semibold" :class="d.status === 'Success' ? 'text-green-600' : 'text-red-500'">{{ d.status }}</td>
+                        <td class="px-3 py-2 font-semibold" :class="d.status === 'Success' ? 'text-green-600' : d.status === 'Pending' ? 'text-amber-500' : 'text-red-500'">{{ d.status }}</td>
                         <td class="px-3 py-2">{{ d.phone }}</td>
                         <td class="px-3 py-2 text-xs text-gray-500">{{ d.date }}</td>
+                        <td class="px-3 py-2 flex flex-wrap gap-1">
+                            <template v-if="d.status === 'Pending' && d.method === 'crypto'">
+                                <button class="px-2 py-1 rounded text-xs text-white bg-green-600 hover:bg-green-700" @click="approve(d.ID)">
+                                    Approve
+                                </button>
+                                <button class="px-2 py-1 rounded text-xs text-white bg-red-500 hover:bg-red-600" @click="reject(d.ID)">
+                                    Reject
+                                </button>
+                            </template>
+                        </td>
                     </tr>
                     <tr v-if="deposits.data.length === 0">
-                        <td colspan="7" class="px-3 py-4 text-center text-gray-400">No deposits found</td>
+                        <td colspan="9" class="px-3 py-4 text-center text-gray-400">No deposits found</td>
                     </tr>
                 </tbody>
             </table>

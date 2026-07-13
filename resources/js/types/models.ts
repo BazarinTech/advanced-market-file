@@ -40,6 +40,7 @@ export interface Order {
     tasks_per_day: number;
     task_category: string | null;
     tasks_claimed_today: number;
+    fx_rate: string | null;
 }
 
 export interface Package {
@@ -57,12 +58,15 @@ export interface Package {
 export interface Transaction {
     ID: number;
     type: 'Deposit' | 'Deposits' | 'Withdraw' | 'Referral';
+    method: 'mpesa' | 'crypto';
     email: string;
     amount: string;
     status: 'Pending' | 'Success' | 'Failed' | 'Approved' | 'Rejected';
     phone: string;
+    payout_address: string | null;
     details: string;
     RecAmount: string;
+    fx_rate: string | null;
     tracking_id: string | null;
     date: string;
 }
@@ -97,8 +101,10 @@ export interface PasswordRecoveryRequest {
 export interface WithdrawalAccount {
     id: number;
     email: string;
-    phone: string;
-    name: string;
+    method: 'mpesa' | 'crypto';
+    phone: string | null;
+    name: string | null;
+    crypto_address: string | null;
 }
 
 export interface Wallet extends Earning {

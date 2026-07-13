@@ -8,6 +8,7 @@ export interface Flash {
     success_links: string | null;
     success_claim_image: string | null;
     success_logo: string | null;
+    success_crypto: string | null;
 }
 
 export interface SharedProps {
@@ -16,6 +17,7 @@ export interface SharedProps {
     };
     flash: Flash;
     platformLogo: string | null;
+    usdRate: number;
 }
 
 declare module '@inertiajs/core' {

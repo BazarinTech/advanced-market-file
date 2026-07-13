@@ -7,6 +7,7 @@ import Icon from '@/components/Icon.vue';
 import AppLogo from '@/components/AppLogo.vue';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import type { CarouselApi } from '@/components/ui/carousel';
+import { useCurrency } from '@/composables/useCurrency';
 
 defineProps<{
     downline: number;
@@ -16,6 +17,8 @@ defineProps<{
 const page = usePage();
 const user = page.props.auth.user!;
 const earnings = user.earnings!;
+
+const { money, moneyRound } = useCurrency();
 
 const slideCount = 3;
 const currentSlide = ref(0);
@@ -28,14 +31,6 @@ function onInitApi(api: CarouselApi) {
 }
 
 const autoplay = Autoplay({ delay: 4500, stopOnInteraction: false });
-
-function money(v: string | number) {
-    return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function moneyRound(v: string | number) {
-    return Math.round(Number(v)).toLocaleString('en-US');
-}
 </script>
 
 <template>
@@ -67,19 +62,19 @@ function moneyRound(v: string | number) {
                             ></div>
                             <p class="text-primary-foreground/70 text-[10px] tracking-[0.3em] uppercase">Wallet Balance</p>
                             <p class="text-primary-foreground text-3xl font-light mt-1 tracking-wide">
-                                Kes <span class="font-semibold">{{ money(earnings.balance) }}</span>
+                                <span class="font-semibold">{{ money(earnings.balance) }}</span>
                             </p>
                             <div class="w-12 h-px bg-primary-foreground/40 mt-3 mb-3"></div>
                             <div class="flex gap-6">
                                 <div>
                                     <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Earned</p>
                                     <p class="text-primary-foreground text-sm font-medium">
-                                        Kes {{ money(Number(earnings.referral) + Number(earnings.deposit)) }}
+                                        {{ money(Number(earnings.referral) + Number(earnings.deposit)) }}
                                     </p>
                                 </div>
                                 <div>
                                     <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Deposited</p>
-                                    <p class="text-primary-foreground text-sm">Kes {{ money(earnings.deposit) }}</p>
+                                    <p class="text-primary-foreground text-sm">{{ money(earnings.deposit) }}</p>
                                 </div>
                                 <div>
                                     <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Team</p>
@@ -98,21 +93,21 @@ function moneyRound(v: string | number) {
                             ></div>
                             <p class="text-white/60 text-[10px] tracking-[0.3em] uppercase">Total Rewards</p>
                             <p class="text-white text-3xl font-light mt-1 tracking-wide">
-                                Kes <span class="font-semibold">{{ money(earnings.totals) }}</span>
+                                <span class="font-semibold">{{ money(earnings.totals) }}</span>
                             </p>
                             <div class="w-12 h-px bg-white/30 mt-3 mb-3"></div>
                             <div class="flex gap-6">
                                 <div>
                                     <p class="text-white/60 text-[10px] tracking-widest uppercase">Withdrawn</p>
-                                    <p class="text-white text-sm font-medium">Kes {{ money(earnings.withdraw) }}</p>
+                                    <p class="text-white text-sm font-medium">{{ money(earnings.withdraw) }}</p>
                                 </div>
                                 <div>
                                     <p class="text-white/60 text-[10px] tracking-widest uppercase">Referral</p>
-                                    <p class="text-white text-sm">Kes {{ money(earnings.referral) }}</p>
+                                    <p class="text-white text-sm">{{ money(earnings.referral) }}</p>
                                 </div>
                                 <div>
                                     <p class="text-white/60 text-[10px] tracking-widest uppercase">Bonus</p>
-                                    <p class="text-white text-sm">Kes {{ money(earnings.bonus) }}</p>
+                                    <p class="text-white text-sm">{{ money(earnings.bonus) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +133,7 @@ function moneyRound(v: string | number) {
                                     </div>
                                     <div>
                                         <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Referral Bonus</p>
-                                        <p class="text-foreground text-sm">Kes {{ money(earnings.referral) }}</p>
+                                        <p class="text-foreground text-sm">{{ money(earnings.referral) }}</p>
                                     </div>
                                 </div>
                                 <Link

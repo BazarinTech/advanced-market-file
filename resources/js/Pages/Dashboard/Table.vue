@@ -3,15 +3,15 @@ import { Head, Link } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import PageHeader from '@/components/PageHeader.vue';
 import Icon from '@/components/Icon.vue';
+import { useCurrency } from '@/composables/useCurrency';
 import type { Package } from '@/types/models';
 
 defineProps<{
     packages: Package[];
+    withdrawal_min: number;
 }>();
 
-function moneyRound(v: string | number) {
-    return Math.round(Number(v)).toLocaleString('en-US');
-}
+const { moneyRound } = useCurrency();
 
 function roi(pkg: Package): string {
     const amount = Number(pkg.amount);
@@ -60,7 +60,7 @@ function roi(pkg: Package): string {
                                 :key="pkg.id"
                                 class="px-3 py-3 text-center text-foreground font-semibold tracking-wide border-r border-border bg-card"
                             >
-                                Kes {{ moneyRound(pkg.amount) }}
+                                {{ moneyRound(pkg.amount) }}
                             </td>
                         </tr>
                         <!-- Cycle -->
@@ -88,7 +88,7 @@ function roi(pkg: Package): string {
                                 :key="pkg.id"
                                 class="px-3 py-3 text-center text-foreground font-semibold tracking-wide border-r border-border bg-card"
                             >
-                                Kes {{ moneyRound(pkg.daily) }}
+                                {{ moneyRound(pkg.daily) }}
                             </td>
                         </tr>
                         <!-- Total -->
@@ -103,7 +103,7 @@ function roi(pkg: Package): string {
                                 :key="pkg.id"
                                 class="px-3 py-3 text-center text-foreground font-semibold tracking-wide border-r border-border bg-secondary"
                             >
-                                Kes {{ moneyRound(Number(pkg.daily) * pkg.days) }}
+                                {{ moneyRound(Number(pkg.daily) * pkg.days) }}
                             </td>
                         </tr>
                         <!-- Reward -->
@@ -142,7 +142,7 @@ function roi(pkg: Package): string {
                         <Icon name="money-bill-wave" class="text-primary text-sm" />
                     </div>
                     <p class="text-muted-foreground text-[9px] tracking-widest uppercase text-center">Min. Withdrawal</p>
-                    <p class="text-foreground text-sm font-semibold">Kes 200</p>
+                    <p class="text-foreground text-sm font-semibold">{{ moneyRound(withdrawal_min) }}</p>
                 </div>
                 <div class="flex flex-col items-center py-5 px-2 gap-1.5 border-r border-border">
                     <div class="w-9 h-9 rounded-xl bg-warning/10 flex items-center justify-center mb-1">

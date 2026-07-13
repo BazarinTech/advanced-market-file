@@ -17,18 +17,22 @@ class Transaction extends Model
 
     protected $fillable = [
         'type',
+        'method',
         'email',
         'amount',
         'status',
         'phone',
+        'payout_address',
         'details',
         'RecAmount',
+        'fx_rate',
         'tracking_id',
     ];
 
     protected $casts = [
         'amount'    => 'decimal:2',
         'RecAmount' => 'decimal:2',
+        'fx_rate'   => 'decimal:4',
         'date'      => 'datetime',
     ];
 

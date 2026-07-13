@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\ReferralService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
+    public function __construct(private ReferralService $referralService) {}
+
     public function deposits()
     {
         $deposits = \App\Models\Transaction::where('type', 'Deposits')
@@ -16,6 +19,39 @@ class TransactionController extends Controller
             ->paginate(25)->onEachSide(1)->withQueryString();
 
         return Inertia::render('Admin/Deposits', compact('deposits'));
+    }
+
+    public function approveDeposit(Request $request, $id)
+    {
+        $tx = \App\Models\Transaction::findOrFail($id);
+
+        abort_unless($tx->status === 'Pending' && $tx->method === 'crypto', 400);
+
+        $earnings = \App\Models\Earning::where('email', $tx->email)->firstOrFail();
+        $earnings->balance += $tx->amount;
+        $earnings->deposit += $tx->amount;
+        $earnings->save();
+
+        $tx->status = 'Success';
+        $tx->save();
+
+        \App\Models\User::where('email', $tx->email)->update(['status' => 'Active']);
+
+        $this->referralService->payCommission($tx->email, (float) $tx->amount);
+
+        return back()->with('success', 'Crypto deposit approved and credited.');
+    }
+
+    public function rejectDeposit(Request $request, $id)
+    {
+        $tx = \App\Models\Transaction::findOrFail($id);
+
+        abort_unless($tx->status === 'Pending' && $tx->method === 'crypto', 400);
+
+        $tx->status = 'Rejected';
+        $tx->save();
+
+        return back()->with('success', 'Crypto deposit rejected.');
     }
 
     public function manualDeposit(Request $request)

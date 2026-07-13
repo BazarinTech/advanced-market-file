@@ -110,6 +110,8 @@ class TaskController extends Controller
         $earnings->totals  += $credited;
         $earnings->save();
 
-        return back()->with('success', 'Reward claimed! +Kes ' . number_format($credited, 2));
+        $rate = (float) Setting::get('usd_kes_rate', 130);
+
+        return back()->with('success', 'Reward claimed! +$' . number_format($credited / $rate, 2));
     }
 }

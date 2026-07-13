@@ -16,55 +16,41 @@ class WithdrawController extends Controller
 
     public function show()
     {
-        $user    = auth()->user();
-        $account = WithdrawalAccount::where('email', $user->email)->first();
+        $user     = auth()->user();
+        $accounts = WithdrawalAccount::where('email', $user->email)->get()->keyBy('method');
 
         return Inertia::render('Dashboard/Withdraw', [
-            'account'        => $account,
+            'accounts'       => [
+                'mpesa'  => $accounts->get('mpesa'),
+                'crypto' => $accounts->get('crypto'),
+            ],
             'withdrawal_min' => (float) Setting::get('withdrawal_min', 50),
             'withdrawal_fee' => (float) Setting::get('withdrawal_fee', 5),
         ]);
     }
 
-    public function setupAccount(Request $request)
-    {
-        $request->validate([
-            'name'  => 'required|string|max:100',
-            'phone' => 'required|string|max:20',
-        ]);
-
-        $user = auth()->user();
-
-        WithdrawalAccount::updateOrCreate(
-            ['email' => $user->email],
-            ['name' => $request->name, 'phone' => $request->phone]
-        );
-
-        return back()->with('success', 'Withdrawal account set up successfully.');
-    }
-
     public function store(Request $request)
     {
+        $rate       = (float) Setting::get('usd_kes_rate', 130);
         $minAmount  = (float) Setting::get('withdrawal_min', 50);
         $feePercent = (float) Setting::get('withdrawal_fee', 5);
+        $minUsd     = round($minAmount / $rate, 2);
 
         $request->validate([
-            'amount' => "required|numeric|min:{$minAmount}",
+            'method' => 'required|in:mpesa,crypto',
+            'amount' => "required|numeric|min:{$minUsd}",
         ]);
 
         $user    = auth()->user();
-        $account = WithdrawalAccount::where('email', $user->email)->first();
+        $account = WithdrawalAccount::where('email', $user->email)->where('method', $request->method)->first();
 
         if (!$account) {
             return back()->with('error', 'Please set up your withdrawal account first.');
         }
 
-        $earnings  = $user->earnings;
-        $amount    = (float) $request->amount;
-
-        if ($amount < $minAmount) {
-            return back()->with('error', "Minimum withdrawal amount is Kes {$minAmount}.");
-        }
+        $earnings = $user->earnings;
+        $usd      = (float) $request->amount;
+        $amount   = round($usd * $rate, 2);
 
         if ($amount > $earnings->balance) {
             return back()->with('error', 'Insufficient balance to process this withdrawal request.');
@@ -79,15 +65,34 @@ class WithdrawController extends Controller
         $earnings->withdraw += $amount;
         $earnings->save();
 
+        if ($request->method === 'crypto') {
+            Transaction::create([
+                'email'          => $user->email,
+                'method'         => 'crypto',
+                'payout_address' => $account->crypto_address,
+                'amount'         => $amount,
+                'type'           => 'Withdraw',
+                'status'         => 'Pending',
+                'details'        => $reference,
+                'RecAmount'      => $netAmount,
+                'fx_rate'        => $rate,
+                'tracking_id'    => $reference,
+            ]);
+
+            return back()->with('success', 'Your crypto withdrawal request has been received and will be processed within ~30 minutes.');
+        }
+
         // Record as Pending
-        $tx = Transaction::create([
+        Transaction::create([
             'email'       => $user->email,
+            'method'      => 'mpesa',
             'phone'       => $account->phone,
             'amount'      => $amount,
             'type'        => 'Withdraw',
             'status'      => 'Pending',
             'details'     => $reference,
             'RecAmount'   => $netAmount,
+            'fx_rate'     => $rate,
             'tracking_id' => $reference,
         ]);
 
@@ -96,9 +101,9 @@ class WithdrawController extends Controller
 
         if ($result['status'] !== 'Success') {
             // Payout API failed — keep balance deducted and leave tx as Pending for manual processing
-            return back()->with('success', "Withdrawal request received. Kes {$netAmount} will be sent to {$account->phone} within 24 hours.");
+            return back()->with('success', "Withdrawal request received. It will be sent to {$account->phone} within 24 hours.");
         }
 
-        return back()->with('success', "Withdrawal initiated. Kes {$netAmount} will be sent to {$account->phone} shortly.");
+        return back()->with('success', "Withdrawal initiated. It will be sent to {$account->phone} shortly.");
     }
 }
