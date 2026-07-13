@@ -35,6 +35,11 @@ return [
         ],
     ],
 
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'model'   => env('OPENAI_MODEL', 'gpt-4o-mini'),
+    ],
+
     'palpluss' => [
         'base_url'     => env('PALPLUSS_BASE_URL', 'https://api.palpluss.com/v1'),
         'auth'         => env('PALPLUSS_AUTH'),

@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import axios from 'axios';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import Icon from '@/components/Icon.vue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { Order } from '@/types/models';
 
 const props = defineProps<{
     orders: Order[];
-    canClaim: boolean;
     packageImages: Record<string, string | null>;
     claimImgSrc: string;
 }>();
+
+const page = usePage();
 
 function moneyRound(v: string | number) {
     return Math.round(Number(v)).toLocaleString('en-US');
@@ -40,14 +43,6 @@ function formatDate(d: Date, withYear = false): string {
 const activeOrders = computed(() => props.orders.filter((o) => o.status === 'Active'));
 const completedOrders = computed(() => props.orders.filter((o) => o.status !== 'Active'));
 
-const nextClaimLabel = computed(() => {
-    const candidates = activeOrders.value.filter((o) => o.last_claimed_at);
-    if (candidates.length === 0) return '9:00 AM tomorrow';
-    const latest = candidates.reduce((a, b) => (new Date(a.last_claimed_at!) > new Date(b.last_claimed_at!) ? a : b));
-    const next = nextClaimAt(latest);
-    return next ? `9:00 AM · ${formatDate(next, true)}` : '9:00 AM tomorrow';
-});
-
 function packageImage(order: Order): string {
     const file = props.packageImages[order.package];
     return file ? `/images/packages/${file}` : '/images/8.jpeg';
@@ -59,10 +54,57 @@ function progress(order: Order): number {
     return Math.min(100, Math.round((Number(order.earnings) / totals) * 100));
 }
 
-const claimForm = useForm({});
+// ── Claim modal (per task, gated behind an AI-generated quiz question) ──
+const modalOpen = ref(false);
+const claimingOrder = ref<Order | null>(null);
+const questionState = ref<'loading' | 'ready' | 'error'>('loading');
+const question = ref('');
+const questionError = ref('');
 
-function claim() {
-    claimForm.post(route('task.claim'), { preserveScroll: true });
+const answerForm = useForm({ answer: '' });
+
+function fetchQuestion() {
+    if (!claimingOrder.value) return;
+
+    questionState.value = 'loading';
+    questionError.value = '';
+    question.value = '';
+    answerForm.reset('answer');
+    answerForm.clearErrors();
+
+    axios
+        .post(route('task.question', claimingOrder.value.ID))
+        .then((res) => {
+            question.value = res.data.question;
+            questionState.value = 'ready';
+        })
+        .catch((err) => {
+            questionError.value = err.response?.data?.message ?? 'Could not generate a question right now.';
+            questionState.value = 'error';
+        });
+}
+
+function openClaim(order: Order) {
+    claimingOrder.value = order;
+    modalOpen.value = true;
+    fetchQuestion();
+}
+
+function submitAnswer() {
+    if (!claimingOrder.value) return;
+
+    answerForm.post(route('task.claim', claimingOrder.value.ID), {
+        preserveScroll: true,
+        onSuccess: () => {
+            if (page.props.flash.error) {
+                // Wrong answer, expired question, etc. — fetch a fresh question to retry.
+                fetchQuestion();
+            } else {
+                modalOpen.value = false;
+                claimingOrder.value = null;
+            }
+        },
+    });
 }
 </script>
 
@@ -76,23 +118,13 @@ function claim() {
         </div>
 
         <div class="flex flex-col items-center w-full px-4 pb-32 mt-4">
-            <!-- Claim card -->
-            <form class="w-full rounded-2xl p-5 flex flex-col items-center bg-card border border-border" @submit.prevent="claim">
+            <!-- Info card -->
+            <div class="w-full rounded-2xl p-5 flex flex-col items-center bg-card border border-border">
                 <img :src="claimImgSrc" class="w-16 h-16 object-cover mx-auto mb-3 rounded-xl" alt="" />
-                <p class="text-muted-foreground text-center text-xs tracking-wide">Collect your daily rewards from active tasks</p>
-                <button
-                    v-if="canClaim"
-                    type="submit"
-                    :disabled="claimForm.processing"
-                    class="mt-4 w-[75%] bg-primary hover:bg-amber-700 text-primary-foreground font-semibold py-2.5 rounded-2xl tracking-widest uppercase text-xs flex items-center justify-center gap-2 disabled:opacity-70"
-                >
-                    <Icon name="bolt" /> {{ claimForm.processing ? 'Claiming…' : 'Claim Reward' }}
-                </button>
-                <div v-else class="mt-4 text-center">
-                    <p class="text-muted-foreground text-[10px] tracking-widest uppercase mb-1">Next claim available</p>
-                    <p class="text-primary text-sm font-medium">{{ nextClaimLabel }}</p>
-                </div>
-            </form>
+                <p class="text-muted-foreground text-center text-xs tracking-wide">
+                    Answer a quick question to claim each task's daily reward
+                </p>
+            </div>
 
             <!-- Tabs -->
             <Tabs default-value="active" class="w-full mt-4">
@@ -141,10 +173,7 @@ function claim() {
                                     <span class="text-muted-foreground">Total: <span class="text-foreground">Kes {{ moneyRound(order.totals) }}</span></span>
                                     <span class="text-muted-foreground">Earned: <span class="text-success">Kes {{ moneyRound(order.earnings) }}</span></span>
                                 </div>
-                                <p v-if="orderCanClaim(order)" class="text-primary text-[10px] uppercase tracking-widest font-medium">
-                                    ● Ready to claim
-                                </p>
-                                <p v-else class="text-muted-foreground text-[10px]">
+                                <p v-if="!orderCanClaim(order)" class="text-muted-foreground text-[10px]">
                                     Available at 9:00 AM · {{ formatDate(nextClaimAt(order)!) }}
                                 </p>
                             </div>
@@ -157,6 +186,16 @@ function claim() {
                             <div class="w-full h-1 rounded-full bg-border">
                                 <div class="h-1 rounded-full bg-primary transition-all" :style="{ width: progress(order) + '%' }"></div>
                             </div>
+                        </div>
+                        <!-- Claim button -->
+                        <div v-if="orderCanClaim(order)" class="px-3 pb-3">
+                            <button
+                                type="button"
+                                class="w-full bg-primary hover:bg-amber-700 text-primary-foreground font-semibold py-2.5 rounded-xl tracking-widest uppercase text-xs flex items-center justify-center gap-2"
+                                @click="openClaim(order)"
+                            >
+                                <Icon name="bolt" /> Claim Reward
+                            </button>
                         </div>
                     </div>
                 </TabsContent>
@@ -189,5 +228,62 @@ function claim() {
                 </TabsContent>
             </Tabs>
         </div>
+
+        <!-- Claim quiz modal -->
+        <Dialog v-model:open="modalOpen">
+            <DialogContent class="bg-card border-border">
+                <DialogHeader>
+                    <DialogTitle class="text-foreground text-xs tracking-[0.3em] uppercase text-center">
+                        Claim {{ claimingOrder?.package }} Reward
+                    </DialogTitle>
+                </DialogHeader>
+
+                <!-- Loading -->
+                <div v-if="questionState === 'loading'" class="flex flex-col items-center gap-3 py-6">
+                    <Icon name="bolt" class="text-primary text-2xl animate-pulse" />
+                    <p class="text-muted-foreground text-xs tracking-wide">Preparing your question…</p>
+                </div>
+
+                <!-- Error fetching a question -->
+                <div v-else-if="questionState === 'error'" class="flex flex-col items-center gap-3 py-4">
+                    <Icon name="triangle-exclamation" class="text-destructive text-2xl" />
+                    <p class="text-destructive text-xs text-center tracking-wide">{{ questionError }}</p>
+                    <button
+                        type="button"
+                        class="px-5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold tracking-widest uppercase"
+                        @click="fetchQuestion"
+                    >
+                        Try Again
+                    </button>
+                </div>
+
+                <!-- Question ready -->
+                <form v-else class="flex flex-col gap-3" @submit.prevent="submitAnswer">
+                    <div class="rounded-2xl px-4 py-3 bg-secondary border border-border">
+                        <p class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase mb-1">Question</p>
+                        <p class="text-foreground text-sm">{{ question }}</p>
+                    </div>
+                    <div class="rounded-2xl px-4 py-3 bg-card border border-border">
+                        <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Your Answer</label>
+                        <input
+                            v-model="answerForm.answer"
+                            type="text"
+                            autocomplete="off"
+                            placeholder="Type your answer…"
+                            class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
+                            required
+                            autofocus
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        :disabled="answerForm.processing"
+                        class="w-full bg-primary hover:bg-amber-700 text-primary-foreground font-bold py-3 rounded-2xl tracking-widest uppercase text-xs mt-1 disabled:opacity-70"
+                    >
+                        {{ answerForm.processing ? 'Checking…' : 'Submit Answer' }}
+                    </button>
+                </form>
+            </DialogContent>
+        </Dialog>
     </AppLayout>
 </template>

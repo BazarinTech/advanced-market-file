@@ -48,8 +48,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/user',        [DashboardController::class, 'userSettings'])->name('user');
     Route::post('/user',       [DashboardController::class, 'updateSettings'])->name('user.update');
 
-    Route::get('/task',        [TaskController::class, 'index'])->name('task');
-    Route::post('/task',       [TaskController::class, 'claim'])->name('task.claim');
+    Route::get('/task',                   [TaskController::class, 'index'])->name('task');
+    Route::post('/task/{order}/question', [TaskController::class, 'question'])->name('task.question');
+    Route::post('/task/{order}/claim',    [TaskController::class, 'claim'])->name('task.claim');
 
     Route::get('/team',        [TeamController::class, 'index'])->name('team');
     Route::get('/packages/table', [DashboardController::class, 'packagesTable'])->name('packages.table');
