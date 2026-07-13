@@ -69,7 +69,7 @@ const autoplay = Autoplay({ delay: 4500, stopOnInteraction: false });
                                 <div>
                                     <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Earned</p>
                                     <p class="text-primary-foreground text-sm font-medium">
-                                        {{ money(Number(earnings.referral) + Number(earnings.deposit)) }}
+                                        {{ money(Number(earnings.referral) + Number(earnings.totals)) }}
                                     </p>
                                 </div>
                                 <div>
