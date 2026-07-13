@@ -132,14 +132,17 @@ const headerStyle =
         <!-- Wallet sheet -->
         <div class="w-full flex-1 -mt-5 rounded-t-3xl bg-card border-t border-border px-5 pt-5 pb-32">
             <!-- Wallet summary row -->
-            <div class="flex items-center">
-                <div class="bg-secondary rounded-full px-4 py-2 flex items-center gap-2.5">
-                    <span class="text-muted-foreground text-[10px] tracking-widest uppercase">Total Withdrawn</span>
-                    <span class="text-foreground text-sm font-bold">KES {{ money(earnings.withdraw) }}</span>
+            <div class="w-full flex items-center justify-between bg-secondary rounded-2xl px-4 py-3.5">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <HugeiconsIcon :icon="MoneySend02Icon" :size="18" color="currentColor" class="text-primary" :stroke-width="1.8" />
+                    </div>
+                    <span class="text-muted-foreground text-xs font-medium tracking-wide">Total Withdrawn</span>
                 </div>
+                <span class="text-foreground text-base font-bold">KES {{ money(earnings.withdraw) }}</span>
             </div>
 
-            <div class="border-t border-border mt-4 mb-5"></div>
+            <div class="border-t border-border mt-5 mb-5"></div>
 
             <!-- Feature grid -->
             <div class="grid grid-cols-4 gap-x-2 gap-y-5">
