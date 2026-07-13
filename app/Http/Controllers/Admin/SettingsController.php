@@ -20,6 +20,7 @@ class SettingsController extends Controller
             'link_telegram'        => Setting::get('link_telegram'),
             'link_customer_support'=> Setting::get('link_customer_support'),
             'link_download_app'    => Setting::get('link_download_app'),
+            'logo'                 => Setting::get('logo'),
         ]);
     }
 
@@ -81,5 +82,20 @@ class SettingsController extends Controller
         Setting::set('claim_image', $filename);
 
         return back()->with('success_claim_image', 'Claim image updated.');
+    }
+
+    public function updateLogo(Request $request)
+    {
+        $request->validate([
+            'logo' => 'required|image|mimes:jpeg,jpg,png,webp|max:1024',
+        ]);
+
+        $file     = $request->file('logo');
+        $filename = 'logo-mark.' . $file->getClientOriginalExtension();
+        $file->move(base_path('images'), $filename);
+
+        Setting::set('logo', $filename);
+
+        return back()->with('success_logo', 'Logo updated.');
     }
 }

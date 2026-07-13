@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import Icon from '@/components/Icon.vue';
+import AppLogo from '@/components/AppLogo.vue';
 
 const props = defineProps<{ ref: string }>();
 
@@ -25,8 +25,8 @@ function submit() {
     <AppLayout>
         <div class="flex flex-col items-center justify-center w-full min-h-screen px-6 py-10">
             <div class="text-center mb-8">
-                <div class="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4">
-                    <Icon name="box" class="text-primary-foreground text-2xl" />
+                <div class="flex items-center justify-center mx-auto mb-4">
+                    <AppLogo />
                 </div>
                 <p class="text-foreground text-2xl font-bold tracking-widest uppercase">Mythos Task</p>
                 <p class="text-muted-foreground text-xs tracking-[0.3em] uppercase mt-1">Create your account</p>

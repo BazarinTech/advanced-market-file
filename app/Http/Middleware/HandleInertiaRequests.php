@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -52,7 +53,9 @@ class HandleInertiaRequests extends Middleware
                 'success_banner' => fn () => $request->session()->get('success_banner'),
                 'success_links' => fn () => $request->session()->get('success_links'),
                 'success_claim_image' => fn () => $request->session()->get('success_claim_image'),
+                'success_logo' => fn () => $request->session()->get('success_logo'),
             ],
+            'platformLogo' => fn () => Setting::get('logo'),
         ];
     }
 }

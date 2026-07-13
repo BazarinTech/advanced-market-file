@@ -4,6 +4,7 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import Autoplay from 'embla-carousel-autoplay';
 import AppLayout from '@/layouts/AppLayout.vue';
 import Icon from '@/components/Icon.vue';
+import AppLogo from '@/components/AppLogo.vue';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import type { CarouselApi } from '@/components/ui/carousel';
 
@@ -44,9 +45,7 @@ function moneyRound(v: string | number) {
         <!-- Top Bar -->
         <div class="w-full flex items-center justify-between h-14 px-4 bg-card border-b border-border">
             <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-                    <Icon name="box" class="text-primary-foreground text-xs" />
-                </div>
+                <AppLogo size="sm" />
                 <span class="text-foreground font-semibold tracking-widest text-sm uppercase">Mythos Task</span>
             </div>
             <div class="text-right">

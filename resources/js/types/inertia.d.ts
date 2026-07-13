@@ -7,6 +7,7 @@ export interface Flash {
     success_banner: string | null;
     success_links: string | null;
     success_claim_image: string | null;
+    success_logo: string | null;
 }
 
 export interface SharedProps {
@@ -14,6 +15,7 @@ export interface SharedProps {
         user: AuthUser | null;
     };
     flash: Flash;
+    platformLogo: string | null;
 }
 
 declare module '@inertiajs/core' {

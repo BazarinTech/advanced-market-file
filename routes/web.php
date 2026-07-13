@@ -96,6 +96,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/settings/banner',      [SettingsController::class, 'updateBanner'])->name('settings.banner');
     Route::post('/settings/claim-image', [SettingsController::class, 'updateClaimImage'])->name('settings.claim-image');
     Route::post('/settings/links',       [SettingsController::class, 'updateLinks'])->name('settings.links');
+    Route::post('/settings/logo',        [SettingsController::class, 'updateLogo'])->name('settings.logo');
 
     Route::get('/wallets',         [WalletController::class, 'index'])->name('wallets');
     Route::get('/wallets/{wallet}', [WalletController::class, 'edit'])->name('wallets.edit');

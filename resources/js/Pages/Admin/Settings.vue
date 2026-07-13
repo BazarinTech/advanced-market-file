@@ -12,7 +12,25 @@ const props = defineProps<{
     link_telegram: string | null;
     link_customer_support: string | null;
     link_download_app: string | null;
+    logo: string | null;
 }>();
+
+// ── Platform logo ──
+const logoForm = useForm<{ logo: File | null }>({
+    logo: null,
+});
+
+function onLogoChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    logoForm.logo = target.files?.[0] ?? null;
+}
+
+function submitLogo() {
+    logoForm.post(route('admin.settings.logo'), {
+        forceFormData: true,
+        onSuccess: () => logoForm.reset(),
+    });
+}
 
 // ── Withdrawal settings ──
 const withdrawalForm = useForm({
@@ -78,6 +96,50 @@ function submitLinks() {
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Platform Settings</h1>
 
         <div class="flex flex-col gap-6 max-w-2xl">
+            <!-- Section 0: Platform Logo -->
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100">
+                    <div class="w-1 h-5 bg-amber-500 rounded"></div>
+                    <h2 class="text-base font-semibold text-gray-700">Platform Logo</h2>
+                </div>
+
+                <p class="text-xs text-gray-400 mb-4">
+                    Shown in the top bar and on the login, register, and forgot-password pages. Falls back to the default icon mark if none is uploaded.
+                </p>
+
+                <div v-if="logo" class="mb-4 flex items-center gap-4">
+                    <div>
+                        <p class="text-xs text-gray-400 mb-2 uppercase tracking-wide">Current Logo</p>
+                        <img :src="`/images/${logo}`" class="w-16 h-16 object-contain rounded-lg border border-gray-200 p-2" alt="Current Logo">
+                    </div>
+                </div>
+
+                <form class="flex flex-col gap-4" @submit.prevent="submitLogo">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Upload New Logo</label>
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/jpg,image/png,image/webp"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
+                            required
+                            @change="onLogoChange"
+                        >
+                        <p class="text-xs text-gray-400 mt-1">Accepted: JPG, PNG, WEBP. Max size: 1 MB. Recommended: square image with transparent background.</p>
+                        <p v-if="logoForm.errors.logo" class="text-xs text-red-500 mt-1">{{ logoForm.errors.logo }}</p>
+                    </div>
+
+                    <div class="pt-2 border-t border-gray-100">
+                        <button
+                            type="submit"
+                            :disabled="logoForm.processing"
+                            class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-6 py-2 rounded-lg text-sm disabled:opacity-60"
+                        >
+                            Upload Logo
+                        </button>
+                    </div>
+                </form>
+            </div>
+
             <!-- Section 1: Withdrawal Settings -->
             <div class="bg-white rounded-xl shadow p-6">
                 <div class="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100">
