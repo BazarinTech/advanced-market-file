@@ -132,13 +132,10 @@ const headerStyle =
         <!-- Wallet sheet -->
         <div class="w-full flex-1 -mt-5 rounded-t-3xl bg-card border-t border-border px-5 pt-5 pb-32">
             <!-- Wallet summary row -->
-            <div class="flex items-center justify-between">
-                <div class="bg-secondary rounded-full px-4 py-2">
-                    <span class="text-foreground text-sm font-medium">Primary Wallet</span>
-                </div>
-                <div class="text-right leading-tight">
-                    <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Total Withdrawn</p>
-                    <p class="text-foreground text-lg font-bold mt-0.5">KES {{ money(earnings.withdraw) }}</p>
+            <div class="flex items-center">
+                <div class="bg-secondary rounded-full px-4 py-2 flex items-center gap-2.5">
+                    <span class="text-muted-foreground text-[10px] tracking-widest uppercase">Total Withdrawn</span>
+                    <span class="text-foreground text-sm font-bold">KES {{ money(earnings.withdraw) }}</span>
                 </div>
             </div>
 
