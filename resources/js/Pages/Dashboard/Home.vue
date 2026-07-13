@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import Autoplay from 'embla-carousel-autoplay';
 import AppLayout from '@/layouts/AppLayout.vue';
 import Icon from '@/components/Icon.vue';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import type { CarouselApi } from '@/components/ui/carousel';
 
 defineProps<{
     downline: number;
@@ -11,6 +15,18 @@ defineProps<{
 const page = usePage();
 const user = page.props.auth.user!;
 const earnings = user.earnings!;
+
+const slideCount = 3;
+const currentSlide = ref(0);
+
+function onInitApi(api: CarouselApi) {
+    if (!api) return;
+    api.on('select', () => {
+        currentSlide.value = api.selectedScrollSnap();
+    });
+}
+
+const autoplay = Autoplay({ delay: 4500, stopOnInteraction: false });
 
 function money(v: string | number) {
     return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -39,34 +55,113 @@ function moneyRound(v: string | number) {
             </div>
         </div>
 
-        <!-- Wallet Balance Card -->
+        <!-- Wallet / Earnings / Team carousel -->
         <div class="w-full px-4 mt-4">
-            <div class="w-full rounded-2xl p-5 relative overflow-hidden bg-primary">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 bg-white"
-                    style="transform: translate(30%, -30%)"
-                ></div>
-                <p class="text-primary-foreground/70 text-[10px] tracking-[0.3em] uppercase">Wallet Balance</p>
-                <p class="text-primary-foreground text-3xl font-light mt-1 tracking-wide">
-                    Kes <span class="font-semibold">{{ money(earnings.balance) }}</span>
-                </p>
-                <div class="w-12 h-px bg-primary-foreground/40 mt-3 mb-3"></div>
-                <div class="flex gap-6">
-                    <div>
-                        <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Earned</p>
-                        <p class="text-primary-foreground text-sm font-medium">
-                            Kes {{ money(Number(earnings.referral) + Number(earnings.deposit)) }}
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Deposited</p>
-                        <p class="text-primary-foreground text-sm">Kes {{ money(earnings.deposit) }}</p>
-                    </div>
-                    <div>
-                        <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Team</p>
-                        <p class="text-primary-foreground text-sm">{{ downline }}</p>
-                    </div>
-                </div>
+            <Carousel :opts="{ loop: true }" :plugins="[autoplay]" class="w-full" @init-api="onInitApi">
+                <CarouselContent>
+                    <!-- Slide 1: Wallet balance -->
+                    <CarouselItem>
+                        <div class="w-full h-40 rounded-2xl p-5 relative overflow-hidden bg-primary">
+                            <div
+                                class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 bg-white"
+                                style="transform: translate(30%, -30%)"
+                            ></div>
+                            <p class="text-primary-foreground/70 text-[10px] tracking-[0.3em] uppercase">Wallet Balance</p>
+                            <p class="text-primary-foreground text-3xl font-light mt-1 tracking-wide">
+                                Kes <span class="font-semibold">{{ money(earnings.balance) }}</span>
+                            </p>
+                            <div class="w-12 h-px bg-primary-foreground/40 mt-3 mb-3"></div>
+                            <div class="flex gap-6">
+                                <div>
+                                    <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Earned</p>
+                                    <p class="text-primary-foreground text-sm font-medium">
+                                        Kes {{ money(Number(earnings.referral) + Number(earnings.deposit)) }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Deposited</p>
+                                    <p class="text-primary-foreground text-sm">Kes {{ money(earnings.deposit) }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-primary-foreground/70 text-[10px] tracking-widest uppercase">Team</p>
+                                    <p class="text-primary-foreground text-sm">{{ downline }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </CarouselItem>
+
+                    <!-- Slide 2: Lifetime earnings -->
+                    <CarouselItem>
+                        <div class="w-full h-40 rounded-2xl p-5 relative overflow-hidden bg-zinc-900">
+                            <div
+                                class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 bg-primary"
+                                style="transform: translate(30%, -30%)"
+                            ></div>
+                            <p class="text-white/60 text-[10px] tracking-[0.3em] uppercase">Total Rewards</p>
+                            <p class="text-white text-3xl font-light mt-1 tracking-wide">
+                                Kes <span class="font-semibold">{{ money(earnings.totals) }}</span>
+                            </p>
+                            <div class="w-12 h-px bg-white/30 mt-3 mb-3"></div>
+                            <div class="flex gap-6">
+                                <div>
+                                    <p class="text-white/60 text-[10px] tracking-widest uppercase">Withdrawn</p>
+                                    <p class="text-white text-sm font-medium">Kes {{ money(earnings.withdraw) }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-white/60 text-[10px] tracking-widest uppercase">Referral</p>
+                                    <p class="text-white text-sm">Kes {{ money(earnings.referral) }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-white/60 text-[10px] tracking-widest uppercase">Bonus</p>
+                                    <p class="text-white text-sm">Kes {{ money(earnings.bonus) }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </CarouselItem>
+
+                    <!-- Slide 3: Team -->
+                    <CarouselItem>
+                        <div class="w-full h-40 rounded-2xl p-5 relative overflow-hidden bg-card border border-border">
+                            <div
+                                class="absolute top-0 right-0 w-32 h-32 rounded-full bg-accent"
+                                style="transform: translate(30%, -30%)"
+                            ></div>
+                            <p class="text-muted-foreground text-[10px] tracking-[0.3em] uppercase">My Team</p>
+                            <p class="text-foreground text-3xl font-light mt-1 tracking-wide">
+                                <span class="font-semibold">{{ downline }}</span> member{{ downline === 1 ? '' : 's' }}
+                            </p>
+                            <div class="w-12 h-px bg-border mt-3 mb-3"></div>
+                            <div class="flex items-end justify-between">
+                                <div class="flex gap-6">
+                                    <div>
+                                        <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Active</p>
+                                        <p class="text-success text-sm font-medium">{{ numActive }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Referral Bonus</p>
+                                        <p class="text-foreground text-sm">Kes {{ money(earnings.referral) }}</p>
+                                    </div>
+                                </div>
+                                <Link
+                                    :href="route('team')"
+                                    class="text-primary text-[11px] font-semibold tracking-widest uppercase no-underline"
+                                >
+                                    Invite &rarr;
+                                </Link>
+                            </div>
+                        </div>
+                    </CarouselItem>
+                </CarouselContent>
+            </Carousel>
+
+            <!-- Dots -->
+            <div class="flex justify-center gap-1.5 mt-3">
+                <span
+                    v-for="i in slideCount"
+                    :key="i"
+                    class="h-1.5 rounded-full transition-all duration-300"
+                    :class="currentSlide === i - 1 ? 'w-5 bg-primary' : 'w-1.5 bg-border'"
+                ></span>
             </div>
         </div>
 
