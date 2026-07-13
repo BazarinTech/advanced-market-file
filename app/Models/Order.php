@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
@@ -13,6 +14,7 @@ class Order extends Model
     protected $fillable = [
         'email', 'package', 'daily', 'totals', 'price',
         'status', 'cycle', 'amount', 'earnings', 'last_claimed_at',
+        'tasks_per_day', 'task_category', 'tasks_claimed_today',
     ];
 
     protected $casts = [
@@ -24,18 +26,51 @@ class Order extends Model
         'last_claimed_at' => 'datetime',
     ];
 
-    public function canClaim(): bool
+    /**
+     * The 9:00 AM boundary that "contains" the given instant — i.e. the most
+     * recent 9:00 AM at or before it. A day's batch of tasks unlocks at this
+     * boundary and stays open until the next one, 24 hours later.
+     */
+    protected function claimWindowFor(Carbon $instant): Carbon
     {
-        if (is_null($this->last_claimed_at)) {
-            return true;
-        }
-        $nextClaim = $this->last_claimed_at->copy()->addDay()->setTime(9, 0, 0);
-        return now()->gte($nextClaim);
+        $nineAm = $instant->copy()->setTime(9, 0, 0);
+        return $instant->gte($nineAm) ? $nineAm : $nineAm->subDay();
     }
 
-    public function nextClaimAt(): \Carbon\Carbon
+    /**
+     * How many of today's batch of tasks have already been claimed. Resets
+     * to 0 once the last claim's window has rolled over into a new one,
+     * regardless of what's stored in tasks_claimed_today.
+     */
+    public function tasksClaimedToday(): int
     {
-        return $this->last_claimed_at->copy()->addDay()->setTime(9, 0, 0);
+        if (is_null($this->last_claimed_at)) {
+            return 0;
+        }
+
+        if ($this->claimWindowFor($this->last_claimed_at)->lt($this->claimWindowFor(now()))) {
+            return 0;
+        }
+
+        return $this->tasks_claimed_today;
+    }
+
+    public function tasksRemainingToday(): int
+    {
+        return max(0, $this->tasks_per_day - $this->tasksClaimedToday());
+    }
+
+    public function canClaim(): bool
+    {
+        return $this->tasksRemainingToday() > 0;
+    }
+
+    /**
+     * When the next batch opens, if today's is used up.
+     */
+    public function nextClaimAt(): Carbon
+    {
+        return $this->claimWindowFor($this->last_claimed_at ?? now())->copy()->addDay();
     }
 
     public function user()

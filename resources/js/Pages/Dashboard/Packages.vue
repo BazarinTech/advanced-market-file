@@ -48,7 +48,7 @@ function buy(pkg: Package) {
             <div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center mr-3">
                 <Icon name="layer-group" class="text-primary-foreground text-xs" />
             </div>
-            <p class="text-foreground text-xs font-light tracking-[0.3em] uppercase">Available Tasks</p>
+            <p class="text-foreground text-xs font-light tracking-[0.3em] uppercase">Task Plans</p>
             <div class="ml-auto text-right">
                 <p class="text-muted-foreground text-[10px] tracking-widest uppercase">Balance</p>
                 <p class="text-primary text-xs font-medium">Kes {{ money(earnings.balance) }}</p>
@@ -97,6 +97,13 @@ function buy(pkg: Package) {
                                 <p class="text-muted-foreground text-[9px] tracking-widest uppercase">{{ pkg.days }}d Total</p>
                                 <p class="text-success text-sm font-semibold mt-0.5">Kes {{ moneyRound(Number(pkg.daily) * pkg.days) }}</p>
                             </div>
+                        </div>
+                        <div class="flex items-center gap-2 mb-4 text-[10px] text-muted-foreground">
+                            <span class="flex items-center gap-1">
+                                <Icon name="bolt" class="text-primary" />
+                                {{ pkg.tasks_per_day }} task{{ pkg.tasks_per_day === 1 ? '' : 's' }}/day
+                            </span>
+                            <span v-if="pkg.task_category">· {{ pkg.task_category }} questions</span>
                         </div>
                         <button
                             type="submit"

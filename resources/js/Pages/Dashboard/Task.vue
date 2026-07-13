@@ -20,20 +20,34 @@ function moneyRound(v: string | number) {
     return Math.round(Number(v)).toLocaleString('en-US');
 }
 
-// Mirrors Order::canClaim() / Order::nextClaimAt() on the backend: earnings unlock
-// daily at 9:00 AM, one day after the last claim (or immediately if never claimed).
-function nextClaimAt(order: Order): Date | null {
-    if (!order.last_claimed_at) return null;
-    const d = new Date(order.last_claimed_at);
-    d.setDate(d.getDate() + 1);
-    d.setHours(9, 0, 0, 0);
-    return d;
+// Mirrors Order::claimWindowFor()/tasksClaimedToday()/nextClaimAt() on the backend:
+// each day's batch of `tasks_per_day` tasks unlocks at 9:00 AM and stays open for 24h.
+function claimWindowFor(instant: Date): Date {
+    const nineAm = new Date(instant);
+    nineAm.setHours(9, 0, 0, 0);
+    return instant >= nineAm ? nineAm : new Date(nineAm.getTime() - 24 * 60 * 60 * 1000);
+}
+
+function tasksClaimedToday(order: Order): number {
+    if (!order.last_claimed_at) return 0;
+    const lastWindow = claimWindowFor(new Date(order.last_claimed_at));
+    const currentWindow = claimWindowFor(new Date());
+    if (lastWindow.getTime() < currentWindow.getTime()) return 0;
+    return order.tasks_claimed_today;
+}
+
+function tasksRemainingToday(order: Order): number {
+    return Math.max(0, order.tasks_per_day - tasksClaimedToday(order));
+}
+
+function nextClaimAt(order: Order): Date {
+    const base = order.last_claimed_at ? new Date(order.last_claimed_at) : new Date();
+    const window = claimWindowFor(base);
+    return new Date(window.getTime() + 24 * 60 * 60 * 1000);
 }
 
 function orderCanClaim(order: Order): boolean {
-    if (!order.last_claimed_at) return true;
-    const next = nextClaimAt(order);
-    return next !== null && new Date() >= next;
+    return tasksRemainingToday(order) > 0;
 }
 
 function formatDate(d: Date, withYear = false): string {
@@ -173,8 +187,11 @@ function submitAnswer() {
                                     <span class="text-muted-foreground">Total: <span class="text-foreground">Kes {{ moneyRound(order.totals) }}</span></span>
                                     <span class="text-muted-foreground">Earned: <span class="text-success">Kes {{ moneyRound(order.earnings) }}</span></span>
                                 </div>
-                                <p v-if="!orderCanClaim(order)" class="text-muted-foreground text-[10px]">
-                                    Available at 9:00 AM · {{ formatDate(nextClaimAt(order)!) }}
+                                <p v-if="orderCanClaim(order)" class="text-primary text-[10px] uppercase tracking-widest font-medium">
+                                    {{ tasksClaimedToday(order) }}/{{ order.tasks_per_day }} tasks done today
+                                </p>
+                                <p v-else class="text-muted-foreground text-[10px]">
+                                    All {{ order.tasks_per_day }} tasks done · next at 9:00 AM · {{ formatDate(nextClaimAt(order)) }}
                                 </p>
                             </div>
                         </div>
@@ -194,7 +211,7 @@ function submitAnswer() {
                                 class="w-full bg-primary hover:bg-amber-700 text-primary-foreground font-semibold py-2.5 rounded-xl tracking-widest uppercase text-xs flex items-center justify-center gap-2"
                                 @click="openClaim(order)"
                             >
-                                <Icon name="bolt" /> Claim Reward
+                                <Icon name="bolt" /> Claim Task {{ tasksClaimedToday(order) + 1 }}/{{ order.tasks_per_day }}
                             </button>
                         </div>
                     </div>
@@ -234,7 +251,7 @@ function submitAnswer() {
             <DialogContent class="bg-card border-border">
                 <DialogHeader>
                     <DialogTitle class="text-foreground text-xs tracking-[0.3em] uppercase text-center">
-                        Claim {{ claimingOrder?.package }} Reward
+                        {{ claimingOrder?.package }} — Task {{ claimingOrder ? tasksClaimedToday(claimingOrder) + 1 : 1 }}/{{ claimingOrder?.tasks_per_day ?? 1 }}
                     </DialogTitle>
                 </DialogHeader>
 

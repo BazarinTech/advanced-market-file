@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Package extends Model
 {
-    protected $fillable = ['name', 'amount', 'daily', 'days', 'image', 'active'];
+    protected $fillable = ['name', 'amount', 'daily', 'days', 'image', 'active', 'tasks_per_day', 'task_category'];
 
     protected $casts = [
         'amount' => 'decimal:2',

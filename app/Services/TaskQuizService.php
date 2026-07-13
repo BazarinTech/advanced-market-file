@@ -56,25 +56,47 @@ class TaskQuizService
     /**
      * Ask OpenAI for one short quiz question + its expected answer. The
      * answer is cached server-side only and never sent to the client.
+     *
+     * @param string|null $category A specific topic to draw the question
+     *        from (e.g. a package's admin-set "task category" like
+     *        "financial services"). When omitted, a broad topic is picked
+     *        at random from categories() instead.
      */
-    public function generateQuestion(int $userId, int $orderId): string
+    public function generateQuestion(int $userId, int $orderId, ?string $category = null): string
     {
-        $categories = $this->categories();
-        $category   = $categories[array_rand($categories)];
+        $category = trim((string) $category) !== '' ? trim($category) : null;
+
+        if ($category) {
+            $systemPrompt =
+                'You generate one short trivia question for a quick claim-verification quiz in a rewards app. '.
+                'Respond ONLY with strict JSON in this exact shape: {"question": "...", "answer": "..."}. The '.
+                'question must have a single short, unambiguous factual answer (a word, number, or short phrase) '.
+                'and must be answerable in a few seconds. Keep it at a broad, generally-known level within the '.
+                'given topic — not obscure or overly technical — so it feels realistic and approachable rather '.
+                'than like a specialist exam question. Avoid repetitive, overused trivia patterns such as "what '.
+                'is the capital of X" — keep the phrasing and angle fresh each time.';
+            $userPrompt = "Generate a trivia question specifically about this topic: {$category}.";
+        } else {
+            $categories  = $this->categories();
+            $randomTopic = $categories[array_rand($categories)];
+
+            $systemPrompt =
+                'You generate one short trivia question for a quick claim-verification quiz in a rewards '.
+                'app, drawing on different aspects of everyday life and the world. Respond ONLY with '.
+                'strict JSON in this exact shape: {"question": "...", "answer": "..."}. The question must '.
+                'have a single short, unambiguous factual answer (a word, number, or short phrase) and must '.
+                'be answerable in a few seconds. Avoid repetitive, overused trivia patterns such as '.
+                '"what is the capital of X" — keep the phrasing and angle fresh each time.';
+            $userPrompt = "Generate a trivia question specifically about this topic: {$randomTopic}.";
+        }
 
         $response = Http::withToken($this->apiKey())
             ->timeout(20)
             ->post('https://api.openai.com/v1/chat/completions', [
                 'model' => $this->model(),
                 'messages' => [
-                    ['role' => 'system', 'content' =>
-                        'You generate one short trivia question for a quick claim-verification quiz in a rewards '.
-                        'app, drawing on different aspects of everyday life and the world. Respond ONLY with '.
-                        'strict JSON in this exact shape: {"question": "...", "answer": "..."}. The question must '.
-                        'have a single short, unambiguous factual answer (a word, number, or short phrase) and must '.
-                        'be answerable in a few seconds. Avoid repetitive, overused trivia patterns such as '.
-                        '"what is the capital of X" — keep the phrasing and angle fresh each time.'],
-                    ['role' => 'user', 'content' => "Generate a trivia question specifically about this topic: {$category}."],
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => $userPrompt],
                 ],
                 'response_format' => ['type' => 'json_object'],
             ]);

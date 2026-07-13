@@ -81,6 +81,8 @@ class DashboardController extends Controller
             'totals'          => $pkg->daily * $pkg->days,
             'status'          => 'Active',
             'last_claimed_at' => null,
+            'tasks_per_day'   => $pkg->tasks_per_day,
+            'task_category'   => $pkg->task_category,
         ]);
 
         $earnings->balance -= $pkg->amount;

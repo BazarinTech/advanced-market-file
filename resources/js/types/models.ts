@@ -37,6 +37,9 @@ export interface Order {
     amount: string;
     earnings: string;
     last_claimed_at: string | null;
+    tasks_per_day: number;
+    task_category: string | null;
+    tasks_claimed_today: number;
 }
 
 export interface Package {
@@ -47,6 +50,8 @@ export interface Package {
     days: number;
     image: string | null;
     active: boolean;
+    tasks_per_day: number;
+    task_category: string | null;
 }
 
 export interface Transaction {

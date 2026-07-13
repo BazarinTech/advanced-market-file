@@ -49,7 +49,7 @@ class TaskController extends Controller
         }
 
         try {
-            $question = $quiz->generateQuestion(auth()->id(), $order->ID);
+            $question = $quiz->generateQuestion(auth()->id(), $order->ID, $order->task_category);
         } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -85,13 +85,25 @@ class TaskController extends Controller
 
         $earnings = auth()->user()->earnings;
 
-        $newEarnings = $order->earnings + $order->daily;
+        // Split the order's daily reward evenly across its tasks-per-day, crediting
+        // whatever's left of the daily amount on the final task of the batch so the
+        // day's total always sums to exactly `daily` regardless of rounding.
+        $tasksClaimedBefore = $order->tasksClaimedToday();
+        $tasksPerDay        = max(1, $order->tasks_per_day);
+        $perTaskAmount      = floor(($order->daily / $tasksPerDay) * 100) / 100;
+        $isLastTaskOfBatch  = ($tasksClaimedBefore + 1) >= $tasksPerDay;
+        $taskAmount         = $isLastTaskOfBatch
+            ? $order->daily - ($perTaskAmount * ($tasksPerDay - 1))
+            : $perTaskAmount;
+
+        $newEarnings = $order->earnings + $taskAmount;
         $capped      = min($newEarnings, $order->totals);
         $credited    = $capped - $order->earnings;
 
-        $order->earnings        = $capped;
-        $order->status          = $capped >= $order->totals ? 'Inactive' : 'Active';
-        $order->last_claimed_at = now();
+        $order->earnings             = $capped;
+        $order->status               = $capped >= $order->totals ? 'Inactive' : 'Active';
+        $order->tasks_claimed_today  = $tasksClaimedBefore + 1;
+        $order->last_claimed_at      = now();
         $order->save();
 
         $earnings->balance += $credited;

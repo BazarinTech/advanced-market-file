@@ -27,6 +27,8 @@ const addForm = useForm<{
     days: string;
     image: File | null;
     active: boolean;
+    tasks_per_day: string;
+    task_category: string;
 }>({
     name: '',
     amount: '',
@@ -34,6 +36,8 @@ const addForm = useForm<{
     days: '',
     image: null,
     active: true,
+    tasks_per_day: '1',
+    task_category: '',
 });
 
 function onAddImageChange(event: Event) {
@@ -63,6 +67,8 @@ function makeEditForm(pkg: Package) {
         days: number;
         image: File | null;
         active: boolean;
+        tasks_per_day: number;
+        task_category: string;
     }>({
         name: pkg.name,
         amount: pkg.amount,
@@ -70,6 +76,8 @@ function makeEditForm(pkg: Package) {
         days: pkg.days,
         image: null,
         active: pkg.active,
+        tasks_per_day: pkg.tasks_per_day,
+        task_category: pkg.task_category ?? '',
     });
 }
 
@@ -158,6 +166,32 @@ function destroyPackage(pkg: Package) {
                     <p v-if="addForm.errors.days" class="text-xs text-red-500 mt-1">{{ addForm.errors.days }}</p>
                 </div>
                 <div>
+                    <label class="text-sm text-gray-600 mb-1 block">Tasks Per Day</label>
+                    <input
+                        v-model="addForm.tasks_per_day"
+                        type="number"
+                        min="1"
+                        max="20"
+                        placeholder="e.g. 3"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                        required
+                    >
+                    <p class="text-xs text-gray-400 mt-1">Daily income is split evenly across this many tasks.</p>
+                    <p v-if="addForm.errors.tasks_per_day" class="text-xs text-red-500 mt-1">{{ addForm.errors.tasks_per_day }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600 mb-1 block">Task Category</label>
+                    <input
+                        v-model="addForm.task_category"
+                        type="text"
+                        list="task-category-suggestions"
+                        placeholder="e.g. Financial services"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                    >
+                    <p class="text-xs text-gray-400 mt-1">The AI asks broad questions within this topic. Leave blank for general knowledge.</p>
+                    <p v-if="addForm.errors.task_category" class="text-xs text-red-500 mt-1">{{ addForm.errors.task_category }}</p>
+                </div>
+                <div>
                     <label class="text-sm text-gray-600 mb-1 block">Thumbnail Image</label>
                     <input
                         type="file"
@@ -193,6 +227,8 @@ function destroyPackage(pkg: Package) {
                         <th class="px-3 py-3">Daily</th>
                         <th class="px-3 py-3">Days</th>
                         <th class="px-3 py-3">Total</th>
+                        <th class="px-3 py-3">Tasks/Day</th>
+                        <th class="px-3 py-3">Category</th>
                         <th class="px-3 py-3">Status</th>
                         <th class="px-3 py-3">Actions</th>
                     </tr>
@@ -208,6 +244,8 @@ function destroyPackage(pkg: Package) {
                             <td class="px-3 py-2">Kes {{ money(pkg.daily) }}</td>
                             <td class="px-3 py-2">{{ pkg.days }} days</td>
                             <td class="px-3 py-2">Kes {{ money(String(Number(pkg.daily) * pkg.days)) }}</td>
+                            <td class="px-3 py-2">{{ pkg.tasks_per_day }}</td>
+                            <td class="px-3 py-2 text-gray-500">{{ pkg.task_category || 'General' }}</td>
                             <td class="px-3 py-2">
                                 <span
                                     class="px-2 py-0.5 rounded-full text-xs font-semibold"
@@ -232,7 +270,7 @@ function destroyPackage(pkg: Package) {
                             </td>
                         </tr>
                         <tr v-if="editingId === pkg.id" class="bg-blue-50">
-                            <td colspan="8" class="px-4 py-3">
+                            <td colspan="10" class="px-4 py-3">
                                 <form class="grid grid-cols-2 sm:grid-cols-3 gap-3" @submit.prevent="submitEdit(pkg)">
                                     <div>
                                         <label class="text-xs text-gray-500">Name</label>
@@ -273,6 +311,27 @@ function destroyPackage(pkg: Package) {
                                         >
                                     </div>
                                     <div>
+                                        <label class="text-xs text-gray-500">Tasks/Day</label>
+                                        <input
+                                            v-model.number="editForm(pkg).tasks_per_day"
+                                            type="number"
+                                            min="1"
+                                            max="20"
+                                            class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm outline-none"
+                                            required
+                                        >
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-gray-500">Task Category</label>
+                                        <input
+                                            v-model="editForm(pkg).task_category"
+                                            type="text"
+                                            list="task-category-suggestions"
+                                            placeholder="General knowledge"
+                                            class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm outline-none"
+                                        >
+                                    </div>
+                                    <div>
                                         <label class="text-xs text-gray-500">New Image (optional)</label>
                                         <input
                                             type="file"
@@ -299,10 +358,22 @@ function destroyPackage(pkg: Package) {
                         </tr>
                     </template>
                     <tr v-if="packages.length === 0">
-                        <td colspan="8" class="px-3 py-4 text-center text-gray-400">No packages found</td>
+                        <td colspan="10" class="px-3 py-4 text-center text-gray-400">No packages found</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <datalist id="task-category-suggestions">
+            <option value="General knowledge" />
+            <option value="Financial services" />
+            <option value="Science and nature" />
+            <option value="Technology" />
+            <option value="Sports" />
+            <option value="History" />
+            <option value="Geography" />
+            <option value="Health and wellness" />
+            <option value="Arts and culture" />
+        </datalist>
     </AdminLayout>
 </template>

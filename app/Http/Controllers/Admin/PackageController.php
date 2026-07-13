@@ -19,12 +19,14 @@ class PackageController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'   => 'required|string|max:100',
-            'amount' => 'required|numeric|min:1',
-            'daily'  => 'required|numeric|min:1',
-            'days'   => 'required|integer|min:1',
-            'image'  => 'nullable|image|max:2048',
-            'active' => 'nullable|boolean',
+            'name'          => 'required|string|max:100',
+            'amount'        => 'required|numeric|min:1',
+            'daily'         => 'required|numeric|min:1',
+            'days'          => 'required|integer|min:1',
+            'image'         => 'nullable|image|max:2048',
+            'active'        => 'nullable|boolean',
+            'tasks_per_day' => 'required|integer|min:1|max:20',
+            'task_category' => 'nullable|string|max:100',
         ]);
 
         $data['active'] = $request->has('active') ? 1 : 0;
@@ -44,12 +46,14 @@ class PackageController extends Controller
     public function update(Request $request, Package $package)
     {
         $data = $request->validate([
-            'name'   => 'required|string|max:100',
-            'amount' => 'required|numeric|min:1',
-            'daily'  => 'required|numeric|min:1',
-            'days'   => 'required|integer|min:1',
-            'image'  => 'nullable|image|max:2048',
-            'active' => 'nullable|boolean',
+            'name'          => 'required|string|max:100',
+            'amount'        => 'required|numeric|min:1',
+            'daily'         => 'required|numeric|min:1',
+            'days'          => 'required|integer|min:1',
+            'image'         => 'nullable|image|max:2048',
+            'active'        => 'nullable|boolean',
+            'tasks_per_day' => 'required|integer|min:1|max:20',
+            'task_category' => 'nullable|string|max:100',
         ]);
 
         $data['active'] = $request->has('active') ? 1 : 0;
