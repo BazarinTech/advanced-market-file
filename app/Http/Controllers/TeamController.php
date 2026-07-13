@@ -11,16 +11,20 @@ class TeamController extends Controller
 {
     public function index()
     {
-        $user     = auth()->user();
-        $earnings = $user->earnings;
+        $user = auth()->user();
 
-        $downline = User::where('refer', $user->ID)
-            ->orderByDesc('ID')
-            ->get();
+        $level1 = User::where('refer', $user->ID)->orderByDesc('ID')->get();
+        $level2 = $level1->isEmpty()
+            ? collect()
+            : User::whereIn('refer', $level1->pluck('ID'))->orderByDesc('ID')->get();
+        $level3 = $level2->isEmpty()
+            ? collect()
+            : User::whereIn('refer', $level2->pluck('ID'))->orderByDesc('ID')->get();
 
-        $downlineEmails = $downline->pluck('email');
+        $allDownline     = $level1->concat($level2)->concat($level3);
+        $downlineEmails  = $allDownline->pluck('email');
 
-        // Total successful deposits per downline member (single query)
+        // Total successful deposits per downline member (single query, all levels)
         $depositTotals = Transaction::whereIn('email', $downlineEmails)
             ->where('type', 'Deposit')
             ->where('status', 'Success')
@@ -28,11 +32,15 @@ class TeamController extends Controller
             ->groupBy('email')
             ->pluck('total', 'email');
 
-        $numActive    = $downline->where('status', 'Active')->count();
+        $numActive    = $allDownline->where('status', 'Active')->count();
         $numDeposited = $depositTotals->count();
 
         return Inertia::render('Dashboard/Team', [
-            'downline'      => $downline,
+            'downline' => [
+                'level1' => $level1->values(),
+                'level2' => $level2->values(),
+                'level3' => $level3->values(),
+            ],
             'numActive'     => $numActive,
             'numDeposited'  => $numDeposited,
             'depositTotals' => $depositTotals,

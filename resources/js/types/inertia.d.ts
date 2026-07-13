@@ -9,6 +9,7 @@ export interface Flash {
     success_claim_image: string | null;
     success_logo: string | null;
     success_crypto: string | null;
+    success_referral: string | null;
 }
 
 export interface SharedProps {

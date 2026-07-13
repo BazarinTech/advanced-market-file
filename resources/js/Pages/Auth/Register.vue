@@ -3,13 +3,13 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AppLogo from '@/components/AppLogo.vue';
 
-const props = defineProps<{ ref: string }>();
+const props = defineProps<{ refCode: string | null; refValid: boolean }>();
 
 const form = useForm({
     email: '',
     phone: '',
     country: '254',
-    ref: props.ref,
+    ref: props.refCode ?? '',
     password: '',
     password_confirmation: '',
 });
@@ -70,10 +70,18 @@ function submit() {
                     <input
                         v-model="form.ref"
                         type="text"
-                        class="w-full bg-transparent outline-none text-sm text-muted-foreground"
-                        readonly
+                        inputmode="numeric"
+                        maxlength="6"
+                        placeholder="6-digit code"
+                        class="w-full bg-transparent outline-none text-sm"
+                        :class="props.refValid ? 'text-muted-foreground' : 'text-foreground placeholder-muted-foreground/60'"
+                        :readonly="props.refValid"
                         required
                     >
+                    <p v-if="!props.refValid" class="text-muted-foreground/70 text-[10px] mt-1">
+                        Ask your inviter for their 6-digit referral code. An account cannot be created without one.
+                    </p>
+                    <p v-if="form.errors.ref" class="text-destructive text-[10px] mt-1">{{ form.errors.ref }}</p>
                 </div>
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">
                     <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Password</label>

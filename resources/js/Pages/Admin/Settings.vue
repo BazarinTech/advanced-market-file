@@ -15,6 +15,9 @@ const props = defineProps<{
     logo: string | null;
     usd_kes_rate: number;
     crypto_deposit_address: string | null;
+    referral_level1_pct: number;
+    referral_level2_pct: number;
+    referral_level3_pct: number;
 }>();
 
 // ── Platform logo ──
@@ -52,6 +55,17 @@ const cryptoForm = useForm({
 
 function submitCrypto() {
     cryptoForm.post(route('admin.settings.crypto'));
+}
+
+// ── Referral commission rates ──
+const referralForm = useForm({
+    referral_level1_pct: props.referral_level1_pct,
+    referral_level2_pct: props.referral_level2_pct,
+    referral_level3_pct: props.referral_level3_pct,
+});
+
+function submitReferral() {
+    referralForm.post(route('admin.settings.referral'));
 }
 
 // ── Home page banner ──
@@ -243,6 +257,70 @@ function submitLinks() {
                             class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-6 py-2 rounded-lg text-sm disabled:opacity-60"
                         >
                             Save Crypto Address
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Section 1c: Referral Commissions -->
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100">
+                    <div class="w-1 h-5 bg-rose-500 rounded"></div>
+                    <h2 class="text-base font-semibold text-gray-700">Referral Commissions</h2>
+                </div>
+
+                <p class="text-xs text-gray-400 mb-4">
+                    Percentage of each successful deposit paid to the depositor's sponsor (Level 1), their sponsor (Level 2), and their sponsor's sponsor (Level 3).
+                </p>
+
+                <form class="flex flex-col gap-5" @submit.prevent="submitReferral">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Level 1 (%)</label>
+                        <input
+                            v-model.number="referralForm.referral_level1_pct"
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="0.1"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
+                            required
+                        >
+                        <p v-if="referralForm.errors.referral_level1_pct" class="text-xs text-red-500 mt-1">{{ referralForm.errors.referral_level1_pct }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Level 2 (%)</label>
+                        <input
+                            v-model.number="referralForm.referral_level2_pct"
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="0.1"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
+                            required
+                        >
+                        <p v-if="referralForm.errors.referral_level2_pct" class="text-xs text-red-500 mt-1">{{ referralForm.errors.referral_level2_pct }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Level 3 (%)</label>
+                        <input
+                            v-model.number="referralForm.referral_level3_pct"
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="0.1"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-rose-500"
+                            required
+                        >
+                        <p v-if="referralForm.errors.referral_level3_pct" class="text-xs text-red-500 mt-1">{{ referralForm.errors.referral_level3_pct }}</p>
+                    </div>
+
+                    <div class="pt-2 border-t border-gray-100">
+                        <button
+                            type="submit"
+                            :disabled="referralForm.processing"
+                            class="bg-rose-600 hover:bg-rose-700 text-white font-semibold px-6 py-2 rounded-lg text-sm disabled:opacity-60"
+                        >
+                            Save Referral Rates
                         </button>
                     </div>
                 </form>

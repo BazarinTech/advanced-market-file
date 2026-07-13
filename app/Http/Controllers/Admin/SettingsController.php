@@ -23,7 +23,25 @@ class SettingsController extends Controller
             'logo'                 => Setting::get('logo'),
             'usd_kes_rate'         => Setting::get('usd_kes_rate', 130),
             'crypto_deposit_address' => Setting::get('crypto_deposit_address'),
+            'referral_level1_pct'  => Setting::get('referral_level1_pct', 10),
+            'referral_level2_pct'  => Setting::get('referral_level2_pct', 3),
+            'referral_level3_pct'  => Setting::get('referral_level3_pct', 1),
         ]);
+    }
+
+    public function updateReferral(Request $request)
+    {
+        $request->validate([
+            'referral_level1_pct' => 'required|numeric|min:0|max:100',
+            'referral_level2_pct' => 'required|numeric|min:0|max:100',
+            'referral_level3_pct' => 'required|numeric|min:0|max:100',
+        ]);
+
+        Setting::set('referral_level1_pct', $request->referral_level1_pct);
+        Setting::set('referral_level2_pct', $request->referral_level2_pct);
+        Setting::set('referral_level3_pct', $request->referral_level3_pct);
+
+        return back()->with('success_referral', 'Referral commission rates saved.');
     }
 
     public function update(Request $request)

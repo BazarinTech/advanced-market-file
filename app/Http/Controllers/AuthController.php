@@ -8,6 +8,7 @@ use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class AuthController extends Controller
@@ -63,8 +64,16 @@ class AuthController extends Controller
 
     public function showRegister(Request $request)
     {
-        $ref = $request->query('invite', '1631');
-        return Inertia::render('Auth/Register', compact('ref'));
+        $ref      = $request->query('invite');
+        $refValid = $ref ? User::where('invite_code', $ref)->exists() : false;
+
+        return Inertia::render('Auth/Register', [
+            // Note: not named "ref" — Vue treats a prop literally named `ref` as the
+            // special template-ref vnode property and silently never delivers it to the
+            // component's props, regardless of how it's bound (v-bind spread included).
+            'refCode'  => $refValid ? $ref : null,
+            'refValid' => $refValid,
+        ]);
     }
 
     public function register(Request $request, SmsService $sms)
@@ -80,19 +89,24 @@ class AuthController extends Controller
                 },
             ],
             'country'  => 'required|string',
-            'ref'      => 'required',
+            'ref'      => ['required', 'string', 'size:6', Rule::exists('users', 'invite_code')],
             'password' => 'required|min:8|confirmed',
+        ], [
+            'ref.exists' => 'Invalid referral code.',
         ]);
 
+        $sponsor = User::where('invite_code', $request->ref)->first();
+
         $user = User::create([
-            'email'    => $request->email,
-            'phone'    => $request->phone,
-            'passwrd'  => $request->password,
-            'password' => Hash::make($request->password),
-            'refer'    => $request->ref,
-            'country'  => $request->country,
-            'status'   => 'Inactive',
-            'role'     => 'user',
+            'email'       => $request->email,
+            'phone'       => $request->phone,
+            'passwrd'     => $request->password,
+            'password'    => Hash::make($request->password),
+            'refer'       => $sponsor->ID,
+            'invite_code' => User::generateInviteCode(),
+            'country'     => $request->country,
+            'status'      => 'Inactive',
+            'role'        => 'user',
         ]);
 
         Earning::create(['email' => $user->email]);

@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $user ? [
-                    ...$user->only(['ID', 'email', 'phone', 'status', 'refer', 'country', 'role']),
+                    ...$user->only(['ID', 'email', 'phone', 'status', 'refer', 'invite_code', 'country', 'role']),
                     'earnings' => $user->earnings,
                 ] : null,
             ],
@@ -55,6 +55,7 @@ class HandleInertiaRequests extends Middleware
                 'success_claim_image' => fn () => $request->session()->get('success_claim_image'),
                 'success_logo' => fn () => $request->session()->get('success_logo'),
                 'success_crypto' => fn () => $request->session()->get('success_crypto'),
+                'success_referral' => fn () => $request->session()->get('success_referral'),
             ],
             'platformLogo' => fn () => Setting::get('logo'),
             'usdRate' => fn () => (float) Setting::get('usd_kes_rate', 130),

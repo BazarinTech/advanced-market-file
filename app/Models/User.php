@@ -21,6 +21,7 @@ class User extends Authenticatable
         'password',
         'status',
         'refer',
+        'invite_code',
         'country',
         'role',
     ];
@@ -62,5 +63,14 @@ class User extends Authenticatable
     public function downline()
     {
         return $this->hasMany(User::class, 'refer', 'ID');
+    }
+
+    public static function generateInviteCode(): string
+    {
+        do {
+            $code = (string) random_int(100000, 999999);
+        } while (static::where('invite_code', $code)->exists());
+
+        return $code;
     }
 }

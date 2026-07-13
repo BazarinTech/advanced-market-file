@@ -114,6 +114,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/settings/links',       [SettingsController::class, 'updateLinks'])->name('settings.links');
     Route::post('/settings/logo',        [SettingsController::class, 'updateLogo'])->name('settings.logo');
     Route::post('/settings/crypto',      [SettingsController::class, 'updateCrypto'])->name('settings.crypto');
+    Route::post('/settings/referral',    [SettingsController::class, 'updateReferral'])->name('settings.referral');
 
     Route::get('/wallets',         [WalletController::class, 'index'])->name('wallets');
     Route::get('/wallets/{wallet}', [WalletController::class, 'edit'])->name('wallets.edit');

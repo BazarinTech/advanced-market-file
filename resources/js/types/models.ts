@@ -4,6 +4,7 @@ export interface User {
     phone: string;
     status: 'Active' | 'Inactive';
     refer: number;
+    invite_code: string;
     country: string;
     role: 'user' | 'admin';
     date: string;
