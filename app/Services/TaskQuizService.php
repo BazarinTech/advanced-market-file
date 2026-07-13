@@ -31,23 +31,51 @@ class TaskQuizService
     }
 
     /**
+     * A broad spread of everyday/world topics. Picked server-side (rather than
+     * left to the model's own judgement) so questions actually rotate across
+     * categories instead of the model defaulting to "capital of X" every time.
+     */
+    protected function categories(): array
+    {
+        return [
+            'science and nature',
+            'world history',
+            'geography and landmarks (not capital cities)',
+            'technology and inventions',
+            'arts, literature, and music',
+            'sports and games',
+            'food and cuisine from around the world',
+            'space and astronomy',
+            'animals and wildlife',
+            'the human body and health',
+            'everyday general knowledge',
+            'famous people and their achievements',
+        ];
+    }
+
+    /**
      * Ask OpenAI for one short quiz question + its expected answer. The
      * answer is cached server-side only and never sent to the client.
      */
     public function generateQuestion(int $userId, int $orderId): string
     {
+        $categories = $this->categories();
+        $category   = $categories[array_rand($categories)];
+
         $response = Http::withToken($this->apiKey())
             ->timeout(20)
             ->post('https://api.openai.com/v1/chat/completions', [
                 'model' => $this->model(),
                 'messages' => [
                     ['role' => 'system', 'content' =>
-                        'You generate one short general-knowledge trivia question for a quick claim-verification quiz '.
-                        'in a rewards app. Respond ONLY with strict JSON in this exact shape: '.
-                        '{"question": "...", "answer": "..."}. The question must have a single short, unambiguous '.
-                        'factual answer (a word, number, or short phrase) and must be answerable in a few seconds.'],
+                        'You generate one short trivia question for a quick claim-verification quiz in a rewards '.
+                        'app, drawing on different aspects of everyday life and the world. Respond ONLY with '.
+                        'strict JSON in this exact shape: {"question": "...", "answer": "..."}. The question must '.
+                        'have a single short, unambiguous factual answer (a word, number, or short phrase) and must '.
+                        'be answerable in a few seconds. Avoid repetitive, overused trivia patterns such as '.
+                        '"what is the capital of X" — keep the phrasing and angle fresh each time.'],
+                    ['role' => 'user', 'content' => "Generate a trivia question specifically about this topic: {$category}."],
                 ],
-                'temperature' => 0.9,
                 'response_format' => ['type' => 'json_object'],
             ]);
 
@@ -106,7 +134,6 @@ class TaskQuizService
                         'user_answer'     => $userAnswer,
                     ])],
                 ],
-                'temperature' => 0,
                 'response_format' => ['type' => 'json_object'],
             ]);
 
