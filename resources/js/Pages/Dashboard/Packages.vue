@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, usePage, useForm } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 import AppLayout from '@/layouts/AppLayout.vue';
 import Icon from '@/components/Icon.vue';
 import { useCurrency } from '@/composables/useCurrency';
@@ -29,7 +30,10 @@ function canAfford(pkg: Package): boolean {
 const forms = Object.fromEntries(props.packages.map((pkg) => [pkg.id, useForm({ package: pkg.id })]));
 
 function buy(pkg: Package) {
-    if (!canAfford(pkg)) return;
+    if (!canAfford(pkg)) {
+        toast.error('Insufficient balance. Please recharge your account to start this task.');
+        return;
+    }
     forms[pkg.id].post(route('home.buy'));
 }
 </script>
@@ -93,15 +97,10 @@ function buy(pkg: Package) {
                         </div>
                         <button
                             type="submit"
-                            :disabled="!canAfford(pkg) || forms[pkg.id].processing"
-                            class="w-full py-3 rounded-2xl text-xs font-semibold tracking-widest uppercase transition-opacity disabled:cursor-not-allowed"
-                            :class="
-                                canAfford(pkg)
-                                    ? 'text-primary-foreground bg-primary hover:bg-amber-700 disabled:opacity-70'
-                                    : 'text-muted-foreground cursor-not-allowed'
-                            "
+                            :disabled="forms[pkg.id].processing"
+                            class="w-full py-3 rounded-2xl text-xs font-semibold tracking-widest uppercase transition-opacity text-primary-foreground bg-primary hover:bg-amber-700 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            {{ forms[pkg.id].processing ? 'Processing…' : canAfford(pkg) ? 'Start Task' : 'Insufficient Balance' }}
+                            {{ forms[pkg.id].processing ? 'Processing…' : 'Start Task' }}
                         </button>
                     </div>
                 </div>
