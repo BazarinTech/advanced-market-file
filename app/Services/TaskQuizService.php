@@ -14,7 +14,7 @@ class TaskQuizService
         $key = config('services.openai.api_key');
 
         if (! $key) {
-            throw new RuntimeException('The verification quiz is not configured yet. Please contact support.');
+            throw new RuntimeException('The verification task is not configured yet. Please contact support.');
         }
 
         return $key;
@@ -53,7 +53,7 @@ class TaskQuizService
 
         if ($response->failed()) {
             Log::error('OpenAI question generation failed', ['body' => $response->body()]);
-            throw new RuntimeException('Could not generate a question right now. Please try again.');
+            throw new RuntimeException('Could not load your task right now. Please try again.');
         }
 
         $data = json_decode((string) $response->json('choices.0.message.content'), true);
@@ -62,7 +62,7 @@ class TaskQuizService
         $answer   = $data['answer'] ?? null;
 
         if (! $question || ! $answer) {
-            throw new RuntimeException('Could not generate a question right now. Please try again.');
+            throw new RuntimeException('Could not load your task right now. Please try again.');
         }
 
         Cache::put($this->cacheKey($userId, $orderId), [
@@ -84,7 +84,7 @@ class TaskQuizService
         $cached = Cache::get($key);
 
         if (! $cached) {
-            throw new RuntimeException('Your question expired. Please try again.');
+            throw new RuntimeException('Your task expired. Please try again.');
         }
 
         Cache::forget($key);
@@ -112,13 +112,13 @@ class TaskQuizService
 
         if ($response->failed()) {
             Log::error('OpenAI answer check failed', ['body' => $response->body()]);
-            throw new RuntimeException('Could not verify your answer right now. Please try again.');
+            throw new RuntimeException('Could not verify your response right now. Please try again.');
         }
 
         $data = json_decode((string) $response->json('choices.0.message.content'), true);
 
         if (! is_array($data) || ! array_key_exists('correct', $data)) {
-            throw new RuntimeException('Could not verify your answer right now. Please try again.');
+            throw new RuntimeException('Could not verify your response right now. Please try again.');
         }
 
         return (bool) $data['correct'];

@@ -79,7 +79,7 @@ function fetchQuestion() {
             questionState.value = 'ready';
         })
         .catch((err) => {
-            questionError.value = err.response?.data?.message ?? 'Could not generate a question right now.';
+            questionError.value = err.response?.data?.message ?? 'Could not load your task right now.';
             questionState.value = 'error';
         });
 }
@@ -97,7 +97,7 @@ function submitAnswer() {
         preserveScroll: true,
         onSuccess: () => {
             if (page.props.flash.error) {
-                // Wrong answer, expired question, etc. — fetch a fresh question to retry.
+                // Wrong response, expired task, etc. — load a fresh task to retry.
                 fetchQuestion();
             } else {
                 modalOpen.value = false;
@@ -122,7 +122,7 @@ function submitAnswer() {
             <div class="w-full rounded-2xl p-5 flex flex-col items-center bg-card border border-border">
                 <img :src="claimImgSrc" class="w-16 h-16 object-cover mx-auto mb-3 rounded-xl" alt="" />
                 <p class="text-muted-foreground text-center text-xs tracking-wide">
-                    Answer a quick question to claim each task's daily reward
+                    Complete a quick task to claim each reward
                 </p>
             </div>
 
@@ -229,7 +229,7 @@ function submitAnswer() {
             </Tabs>
         </div>
 
-        <!-- Claim quiz modal -->
+        <!-- Claim task modal -->
         <Dialog v-model:open="modalOpen">
             <DialogContent class="bg-card border-border">
                 <DialogHeader>
@@ -241,10 +241,10 @@ function submitAnswer() {
                 <!-- Loading -->
                 <div v-if="questionState === 'loading'" class="flex flex-col items-center gap-3 py-6">
                     <Icon name="bolt" class="text-primary text-2xl animate-pulse" />
-                    <p class="text-muted-foreground text-xs tracking-wide">Preparing your question…</p>
+                    <p class="text-muted-foreground text-xs tracking-wide">Preparing your task…</p>
                 </div>
 
-                <!-- Error fetching a question -->
+                <!-- Error loading the task -->
                 <div v-else-if="questionState === 'error'" class="flex flex-col items-center gap-3 py-4">
                     <Icon name="triangle-exclamation" class="text-destructive text-2xl" />
                     <p class="text-destructive text-xs text-center tracking-wide">{{ questionError }}</p>
@@ -257,19 +257,19 @@ function submitAnswer() {
                     </button>
                 </div>
 
-                <!-- Question ready -->
+                <!-- Task ready -->
                 <form v-else class="flex flex-col gap-3" @submit.prevent="submitAnswer">
                     <div class="rounded-2xl px-4 py-3 bg-secondary border border-border">
-                        <p class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase mb-1">Question</p>
+                        <p class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase mb-1">Task</p>
                         <p class="text-foreground text-sm">{{ question }}</p>
                     </div>
                     <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                        <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Your Answer</label>
+                        <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Your Response</label>
                         <input
                             v-model="answerForm.answer"
                             type="text"
                             autocomplete="off"
-                            placeholder="Type your answer…"
+                            placeholder="Type your response…"
                             class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                             required
                             autofocus
@@ -280,7 +280,7 @@ function submitAnswer() {
                         :disabled="answerForm.processing"
                         class="w-full bg-primary hover:bg-amber-700 text-primary-foreground font-bold py-3 rounded-2xl tracking-widest uppercase text-xs mt-1 disabled:opacity-70"
                     >
-                        {{ answerForm.processing ? 'Checking…' : 'Submit Answer' }}
+                        {{ answerForm.processing ? 'Checking…' : 'Submit' }}
                     </button>
                 </form>
             </DialogContent>

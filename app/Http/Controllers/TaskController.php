@@ -80,7 +80,7 @@ class TaskController extends Controller
         }
 
         if (! $correct) {
-            return back()->with('error', "That answer wasn't quite right. Please try again.");
+            return back()->with('error', "That response wasn't quite right. Please try again.");
         }
 
         $earnings = auth()->user()->earnings;
