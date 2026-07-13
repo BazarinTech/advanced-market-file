@@ -3,7 +3,9 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepositController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PaymentCallbackController;
+use App\Http\Controllers\PhoneVerificationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TransactionController;
@@ -33,14 +35,24 @@ Route::middleware('guest')->group(function () {
     Route::post('/login',          [AuthController::class, 'login']);
     Route::get('/register',        [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register',       [AuthController::class, 'register']);
-    Route::get('/forgot-password', [AuthController::class, 'showForgot'])->name('forgot');
-    Route::post('/forgot-password',[AuthController::class, 'submitForgot'])->name('forgot.submit');
+
+    Route::get('/forgot-password',  [PasswordResetController::class, 'showForgot'])->name('forgot');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendCode'])->name('forgot.send')->middleware('throttle:5,1');
+    Route::get('/reset-password',   [PasswordResetController::class, 'showReset'])->name('password.reset');
+    Route::post('/reset-password',  [PasswordResetController::class, 'reset'])->name('password.reset.submit');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-// Authenticated user routes
+// Phone verification — authenticated but not necessarily phone-verified yet
 Route::middleware('auth')->group(function () {
+    Route::get('/verify-phone',         [PhoneVerificationController::class, 'show'])->name('verify-phone');
+    Route::post('/verify-phone',        [PhoneVerificationController::class, 'verify'])->name('verify-phone.verify');
+    Route::post('/verify-phone/resend', [PhoneVerificationController::class, 'resend'])->name('verify-phone.resend')->middleware('throttle:5,1');
+});
+
+// Authenticated + phone-verified user routes
+Route::middleware(['auth', 'phone.verified'])->group(function () {
     Route::get('/home',        [DashboardController::class, 'home'])->name('home');
     Route::get('/packages',    [DashboardController::class, 'packages'])->name('packages');
     Route::post('/home',       [DashboardController::class, 'buyPackage'])->name('home.buy');
@@ -81,8 +93,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/users/{id}/status',          [Admin\UserController::class, 'updateStatus'])->name('users.status');
     Route::post('/users/{id}/make-admin',      [Admin\UserController::class, 'makeAdmin'])->name('users.make-admin');
     Route::post('/users/{id}/reset-password',  [Admin\UserController::class, 'resetPassword'])->name('users.reset-password');
-    Route::get('/recovery-requests',           [Admin\UserController::class, 'recoveryRequests'])->name('recovery-requests');
-    Route::post('/recovery-requests/{id}/resolve', [Admin\UserController::class, 'resolveRecovery'])->name('recovery-requests.resolve');
     Route::get('/deposits',                    [Admin\TransactionController::class, 'deposits'])->name('deposits');
     Route::post('/deposits',                   [Admin\TransactionController::class, 'manualDeposit'])->name('deposits.store');
     Route::get('/withdrawals',                 [Admin\TransactionController::class, 'withdrawals'])->name('withdrawals');

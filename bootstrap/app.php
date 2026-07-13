@@ -12,8 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin'         => \App\Http\Middleware\AdminMiddleware::class,
-            'not.installed' => \App\Http\Middleware\CheckNotInstalled::class,
+            'admin'          => \App\Http\Middleware\AdminMiddleware::class,
+            'not.installed'  => \App\Http\Middleware\CheckNotInstalled::class,
+            'phone.verified' => \App\Http\Middleware\EnsurePhoneIsVerified::class,
         ]);
 
         $middleware->web(append: [

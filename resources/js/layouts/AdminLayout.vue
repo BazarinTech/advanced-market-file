@@ -13,7 +13,6 @@ const navLinks = [
     { route: 'admin.deposits', icon: 'money', label: 'Deposits' },
     { route: 'admin.withdrawals', icon: 'money-bill-trend-up', label: 'Withdrawals' },
     { route: 'admin.users', icon: 'users', label: 'Users' },
-    { route: 'admin.recovery-requests', icon: 'key', label: 'Recovery Requests' },
     { route: 'admin.packages', icon: 'box', label: 'Packages' },
     { route: 'admin.withdrawal-accounts', icon: 'id-card', label: 'W. Accounts' },
     { route: 'admin.wallets', icon: 'wallet', label: 'Wallets' },

@@ -40,6 +40,13 @@ return [
         'model'   => env('OPENAI_MODEL', 'gpt-4o-mini'),
     ],
 
+    'hostpinnacle' => [
+        'userid'    => env('HOSTPINNACLE_USERID'),
+        'password'  => env('HOSTPINNACLE_PASSWORD'),
+        'api_key'   => env('HOSTPINNACLE_API_KEY'),
+        'sender_id' => env('HOSTPINNACLE_SENDER_ID', 'GROVER'),
+    ],
+
     'palpluss' => [
         'base_url'     => env('PALPLUSS_BASE_URL', 'https://api.palpluss.com/v1'),
         'auth'         => env('PALPLUSS_AUTH'),

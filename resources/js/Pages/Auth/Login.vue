@@ -4,7 +4,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import AppLogo from '@/components/AppLogo.vue';
 
 const form = useForm({
-    email: '',
+    login: '',
     password: '',
 });
 
@@ -28,11 +28,12 @@ function submit() {
 
             <form class="w-full flex flex-col gap-4" @submit.prevent="submit">
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Email Address</label>
+                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Email or Phone</label>
                     <input
-                        v-model="form.email"
-                        type="email"
-                        placeholder="your@email.com"
+                        v-model="form.login"
+                        type="text"
+                        placeholder="your@email.com or 07XXXXXXXX"
+                        autocomplete="username"
                         class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                         required
                     >

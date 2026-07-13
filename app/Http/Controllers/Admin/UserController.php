@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PasswordRecoveryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -58,21 +57,5 @@ class UserController extends Controller
         $user->save();
 
         return back()->with('success', "Password reset for {$user->email}.");
-    }
-
-    public function recoveryRequests()
-    {
-        $requests = PasswordRecoveryRequest::orderByDesc('created_at')->get();
-        return Inertia::render('Admin/RecoveryRequests', compact('requests'));
-    }
-
-    public function resolveRecovery(Request $request, $id)
-    {
-        $record = PasswordRecoveryRequest::findOrFail($id);
-        $record->status      = 'Resolved';
-        $record->resolved_at = now();
-        $record->save();
-
-        return back()->with('success', "Request for {$record->email} marked as resolved.");
     }
 }

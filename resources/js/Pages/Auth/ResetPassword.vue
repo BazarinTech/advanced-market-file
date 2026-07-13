@@ -2,25 +2,24 @@
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AppLogo from '@/components/AppLogo.vue';
+import Icon from '@/components/Icon.vue';
 
-const props = defineProps<{ ref: string }>();
+const props = defineProps<{ phone: string }>();
 
 const form = useForm({
-    email: '',
-    phone: '',
-    country: '254',
-    ref: props.ref,
+    phone: props.phone,
+    code: '',
     password: '',
     password_confirmation: '',
 });
 
 function submit() {
-    form.post(route('register'));
+    form.post(route('password.reset.submit'));
 }
 </script>
 
 <template>
-    <Head title="Create Account" />
+    <Head title="Reset Password" />
 
     <AppLayout>
         <div class="flex flex-col items-center justify-center w-full min-h-screen px-6 py-10">
@@ -29,54 +28,42 @@ function submit() {
                     <AppLogo />
                 </div>
                 <p class="text-foreground text-2xl font-bold tracking-widest uppercase">Mythos Task</p>
-                <p class="text-muted-foreground text-xs tracking-[0.3em] uppercase mt-1">Create your account</p>
+                <p class="text-muted-foreground text-xs tracking-[0.3em] uppercase mt-1">Reset Password</p>
+            </div>
+
+            <div class="w-full rounded-2xl px-4 py-4 mb-4 flex items-start gap-3 bg-card border border-border">
+                <Icon name="circle-info" class="text-primary mt-0.5 text-sm shrink-0" />
+                <p class="text-muted-foreground text-xs tracking-wide leading-relaxed">
+                    Enter the code sent to <span class="text-foreground font-medium">{{ props.phone }}</span> along with your new password.
+                </p>
             </div>
 
             <form class="w-full flex flex-col gap-3" @submit.prevent="submit">
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Email Address</label>
-                    <input
-                        v-model="form.email"
-                        type="email"
-                        placeholder="your@email.com"
-                        class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
-                        required
-                    >
-                </div>
-                <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Phone Number (Safaricom only)</label>
+                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Phone Number</label>
                     <input
                         v-model="form.phone"
-                        type="text"
+                        type="tel"
                         placeholder="07XXXXXXXX"
                         class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                         required
                     >
-                    <p class="text-muted-foreground/70 text-[10px] mt-1">
-                        Only Safaricom numbers are supported — you'll receive an SMS code to verify it.
-                    </p>
                 </div>
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Country</label>
-                    <select v-model="form.country" class="w-full bg-card outline-none text-sm text-foreground" required>
-                        <option value="254">Kenya</option>
-                        <option value="256">Uganda</option>
-                        <option value="255">Tanzania</option>
-                        <option value="250">Other</option>
-                    </select>
-                </div>
-                <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Referral Code</label>
+                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Verification Code</label>
                     <input
-                        v-model="form.ref"
+                        v-model="form.code"
                         type="text"
-                        class="w-full bg-transparent outline-none text-sm text-muted-foreground"
-                        readonly
+                        inputmode="numeric"
+                        autocomplete="one-time-code"
+                        placeholder="123456"
+                        class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60 tracking-widest"
                         required
+                        autofocus
                     >
                 </div>
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Password</label>
+                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">New Password</label>
                     <input
                         v-model="form.password"
                         type="password"
@@ -86,7 +73,7 @@ function submit() {
                     >
                 </div>
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Confirm Password</label>
+                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Confirm New Password</label>
                     <input
                         v-model="form.password_confirmation"
                         type="password"
@@ -100,11 +87,11 @@ function submit() {
                     :disabled="form.processing"
                     class="w-full bg-primary hover:bg-amber-700 text-primary-foreground font-bold py-3.5 rounded-2xl tracking-[0.2em] uppercase text-sm mt-2 disabled:opacity-70"
                 >
-                    {{ form.processing ? 'Creating account...' : 'Create Account' }}
+                    {{ form.processing ? 'Resetting...' : 'Reset Password' }}
                 </button>
                 <div class="text-center mt-1">
                     <Link :href="route('login')" class="text-muted-foreground text-xs tracking-widest uppercase hover:text-primary">
-                        Already have an account? Sign In
+                        &larr; Back to Login
                     </Link>
                 </div>
             </form>

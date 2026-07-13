@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Earning;
-use App\Models\PasswordRecoveryRequest;
 use App\Models\User;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -20,14 +20,16 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'login'    => 'required|string',
             'password' => 'required|min:8',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->login)
+            ->orWhere('phone', $request->login)
+            ->first();
 
         if (!$user) {
-            return back()->withErrors(['email' => 'Invalid account.'])->withInput();
+            return back()->withErrors(['login' => 'Invalid account.'])->withInput();
         }
 
         // Try hashed password first, then fall back to legacy plaintext passwrd
@@ -43,10 +45,14 @@ class AuthController extends Controller
         }
 
         if (!$authenticated) {
-            return back()->withErrors(['email' => 'Invalid account.'])->withInput();
+            return back()->withErrors(['login' => 'Invalid account.'])->withInput();
         }
 
         Auth::login($user, $request->boolean('remember'));
+
+        if (! $user->phone_verified_at) {
+            return redirect()->route('verify-phone');
+        }
 
         if ($user->isAdmin()) {
             return redirect()->route('admin.dashboard')->with('success', 'Welcome back!');
@@ -61,11 +67,18 @@ class AuthController extends Controller
         return Inertia::render('Auth/Register', compact('ref'));
     }
 
-    public function register(Request $request)
+    public function register(Request $request, SmsService $sms)
     {
         $request->validate([
             'email'    => 'required|email|unique:users,email',
-            'phone'    => 'required|string|max:20',
+            'phone'    => [
+                'required', 'string', 'max:20', 'unique:users,phone',
+                function ($attribute, $value, $fail) use ($sms) {
+                    if (! $sms->isSafaricomNumber($value)) {
+                        $fail('Only Safaricom phone numbers are accepted (SMS verification requires it).');
+                    }
+                },
+            ],
             'country'  => 'required|string',
             'ref'      => 'required',
             'password' => 'required|min:8|confirmed',
@@ -84,7 +97,15 @@ class AuthController extends Controller
 
         Earning::create(['email' => $user->email]);
 
-        return redirect()->route('login')->with('success', 'Account created! Please login.');
+        Auth::login($user);
+
+        try {
+            $sms->sendOtp($user->phone, 'registration');
+        } catch (\Throwable $e) {
+            // Non-fatal — the verify-phone page offers a "resend code" action.
+        }
+
+        return redirect()->route('verify-phone')->with('success', 'Account created! Enter the code sent to your phone.');
     }
 
     public function logout(Request $request)
@@ -93,35 +114,5 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login')->with('success', 'Signed out successfully.');
-    }
-
-    public function showForgot()
-    {
-        return Inertia::render('Auth/Forgot', [
-            'support_email'   => config('services.support.email'),
-            'support_phone'   => config('services.support.phone'),
-            'support_network' => config('services.support.network'),
-            'support_url'     => config('services.links.customer_support'),
-        ]);
-    }
-
-    public function submitForgot(Request $request)
-    {
-        $request->validate([
-            'name'    => 'required|string|max:100',
-            'email'   => 'required|email',
-            'phone'   => 'required|string|max:20',
-            'network' => 'required|string',
-        ]);
-
-        PasswordRecoveryRequest::create([
-            'name'    => $request->name,
-            'email'   => $request->email,
-            'phone'   => $request->phone,
-            'network' => $request->network,
-            'status'  => 'Pending',
-        ]);
-
-        return back()->with('success', 'Request received. Our support team will contact you shortly.');
     }
 }
