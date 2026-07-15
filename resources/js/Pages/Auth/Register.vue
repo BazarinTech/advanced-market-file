@@ -62,6 +62,11 @@ function submit() {
                         <option value="254">Kenya</option>
                         <option value="256">Uganda</option>
                         <option value="255">Tanzania</option>
+                        <option value="27">South Africa</option>
+                        <option value="234">Nigeria</option>
+                        <option value="1">USA</option>
+                        <option value="1">Canada</option>
+                        <option value="44">UK</option>
                         <option value="250">Other</option>
                     </select>
                 </div>

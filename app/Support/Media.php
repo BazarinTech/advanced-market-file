@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class Media
@@ -10,17 +11,30 @@ class Media
     /**
      * The bucket has no public-read access (Railway's Bucket dashboard offers no
      * such toggle), so every URL must be a signed, time-limited request instead
-     * of a permanent public one. Regenerated fresh on every request that renders
-     * it, so the expiry only matters if a single page is left open past it.
+     * of a permanent public one. A fresh signature every request would give the
+     * same file a different URL on every page load, which defeats the browser's
+     * HTTP cache entirely (the URL is the cache key) and forces a full re-fetch
+     * of the image bytes every time it's rendered. Caching the signed URL itself
+     * for a while shorter than its own validity keeps it stable so the browser
+     * can actually reuse what it already downloaded.
      */
     public static function url(?string $path): ?string
     {
-        return $path ? Storage::disk('s3')->temporaryUrl($path, now()->addDay()) : null;
+        if (!$path) {
+            return null;
+        }
+
+        return Cache::remember(
+            "media-url:{$path}",
+            now()->addHours(20),
+            fn () => Storage::disk('s3')->temporaryUrl($path, now()->addDay()),
+        );
     }
 
     public static function put(UploadedFile $file, string $directory, string $filename): string
     {
         Storage::disk('s3')->putFileAs($directory, $file, $filename);
+        Cache::forget("media-url:{$directory}/{$filename}");
 
         return $filename;
     }
@@ -29,6 +43,7 @@ class Media
     {
         if ($filename) {
             Storage::disk('s3')->delete("{$directory}/{$filename}");
+            Cache::forget("media-url:{$directory}/{$filename}");
         }
     }
 }

@@ -3,8 +3,10 @@ import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import Icon from '@/components/Icon.vue';
 import { useFlashToasts } from '@/composables/useFlashToasts';
+import { useImageSkeletons } from '@/composables/useImageSkeletons';
 
 useFlashToasts();
+useImageSkeletons();
 
 const sidebarOpen = ref(window.innerWidth >= 1024);
 

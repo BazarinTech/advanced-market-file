@@ -17,7 +17,6 @@ const iconClass = computed(() => (props.size === 'sm' ? 'text-primary-foreground
         v-if="logo"
         :src="logo"
         alt="Logo"
-        data-no-skeleton
         class="object-contain shrink-0"
         :class="boxClass"
     >

@@ -134,3 +134,35 @@
     @apply bg-background text-foreground;
     }
 }
+
+/* Shimmering placeholder shown over every <img> while it loads — see
+   resources/js/composables/useImageSkeletons.ts. Opt out per-image with a
+   `data-no-skeleton` attribute. */
+@keyframes skeletonShimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+.img-skeleton {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(90deg, var(--muted) 25%, var(--border) 50%, var(--muted) 75%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.4s ease-in-out infinite;
+    transition: opacity 0.35s ease;
+}
+.img-skeleton.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+.img-lazy {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+.img-lazy.loaded {
+    opacity: 1;
+}
