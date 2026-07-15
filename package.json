@@ -18,6 +18,8 @@
         "vue-tsc": "^3.3.7"
     },
     "dependencies": {
+        "@fontsource/geist-mono": "^5.2.8",
+        "@fontsource/geist-sans": "^5.2.5",
         "@hugeicons/core-free-icons": "^4.2.2",
         "@hugeicons/vue": "^1.0.7",
         "@inertiajs/vue3": "^3.6.1",
