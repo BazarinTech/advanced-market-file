@@ -11,6 +11,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Railway (like Heroku/Render) terminates TLS at its edge and forwards
+        // plain HTTP to the container, with X-Forwarded-Proto: https on the
+        // original request. Without trusting that proxy, Laravel has no way to
+        // know the real request was secure, so url()/asset()/Vite all generate
+        // http:// links — which get blocked as mixed content on an https:// page.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'admin'          => \App\Http\Middleware\AdminMiddleware::class,
             'not.installed'  => \App\Http\Middleware\CheckNotInstalled::class,
