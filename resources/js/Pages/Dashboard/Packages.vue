@@ -60,7 +60,7 @@ function buy(pkg: Package) {
                 <div class="rounded-2xl overflow-hidden bg-card border border-border">
                     <!-- Package header -->
                     <div class="relative">
-                        <img :src="`/images/packages/${pkg.image}`" class="w-full object-cover" style="height: 120px" :alt="pkg.name" />
+                        <img :src="pkg.image_url ?? '/images/8.jpeg'" class="w-full object-cover" style="height: 120px" :alt="pkg.name" />
                         <div
                             class="absolute inset-0"
                             style="background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.85))"

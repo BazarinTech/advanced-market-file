@@ -136,7 +136,7 @@ function submitLinks() {
                 <div v-if="logo" class="mb-4 flex items-center gap-4">
                     <div>
                         <p class="text-xs text-gray-400 mb-2 uppercase tracking-wide">Current Logo</p>
-                        <img :src="`/images/${logo}`" class="w-16 h-16 object-contain rounded-lg border border-gray-200 p-2" alt="Current Logo">
+                        <img :src="logo" class="w-16 h-16 object-contain rounded-lg border border-gray-200 p-2" alt="Current Logo">
                     </div>
                 </div>
 
@@ -335,7 +335,7 @@ function submitLinks() {
 
                 <div v-if="home_banner" class="mb-4">
                     <p class="text-xs text-gray-400 mb-2 uppercase tracking-wide">Current Banner</p>
-                    <img :src="`/images/${home_banner}`" class="w-full h-36 object-cover rounded-lg border border-gray-200" alt="Current Banner">
+                    <img :src="home_banner" class="w-full h-36 object-cover rounded-lg border border-gray-200" alt="Current Banner">
                 </div>
 
                 <form class="flex flex-col gap-4" @submit.prevent="submitBanner">
@@ -374,7 +374,7 @@ function submitLinks() {
                 <div v-if="claim_image" class="mb-4 flex items-center gap-4">
                     <div>
                         <p class="text-xs text-gray-400 mb-2 uppercase tracking-wide">Current Image</p>
-                        <img :src="`/images/${claim_image}`" class="w-20 h-20 object-cover rounded-lg border border-gray-200" alt="Claim Image">
+                        <img :src="claim_image" class="w-20 h-20 object-cover rounded-lg border border-gray-200" alt="Claim Image">
                     </div>
                 </div>
 

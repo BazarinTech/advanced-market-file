@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Support\Media;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Package extends Model
 {
     protected $fillable = ['name', 'amount', 'daily', 'days', 'image', 'active', 'tasks_per_day', 'task_category'];
+
+    protected $appends = ['image_url'];
 
     protected $casts = [
         'amount' => 'decimal:2',
@@ -19,8 +23,10 @@ class Package extends Model
         return $this->daily * $this->days;
     }
 
-    public function imageUrl(): string
+    protected function imageUrl(): Attribute
     {
-        return asset('images/packages/' . $this->image);
+        return Attribute::make(
+            get: fn () => $this->image ? Media::url('packages/'.$this->image) : null,
+        );
     }
 }

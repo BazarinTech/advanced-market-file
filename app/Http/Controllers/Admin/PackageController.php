@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Package;
+use App\Support\Media;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 
 class PackageController extends Controller
@@ -34,8 +34,7 @@ class PackageController extends Controller
         if ($request->hasFile('image')) {
             $file     = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(base_path('images/packages'), $filename);
-            $data['image'] = $filename;
+            $data['image'] = Media::put($file, 'packages', $filename);
         }
 
         Package::create($data);
@@ -59,13 +58,10 @@ class PackageController extends Controller
         $data['active'] = $request->has('active') ? 1 : 0;
 
         if ($request->hasFile('image')) {
-            if ($package->image) {
-                @unlink(base_path('images/packages/' . $package->image));
-            }
+            Media::delete('packages', $package->image);
             $file     = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(base_path('images/packages'), $filename);
-            $data['image'] = $filename;
+            $data['image'] = Media::put($file, 'packages', $filename);
         } else {
             unset($data['image']);
         }
@@ -77,9 +73,7 @@ class PackageController extends Controller
 
     public function destroy(Package $package)
     {
-        if ($package->image) {
-            @unlink(base_path('images/packages/' . $package->image));
-        }
+        Media::delete('packages', $package->image);
         $package->delete();
 
         return back()->with('success', 'Package deleted.');

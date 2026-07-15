@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Package;
 use App\Models\Setting;
 use App\Services\TaskQuizService;
+use App\Support\Media;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -16,12 +17,13 @@ class TaskController extends Controller
         $user   = auth()->user();
         $orders = Order::where('email', $user->email)->orderByDesc('ID')->get();
 
-        // Load package images keyed by name
-        $packageImages = Package::pluck('image', 'name');
+        // Load package image URLs keyed by name
+        $packageImages = Package::pluck('image', 'name')
+            ->map(fn ($file) => $file ? Media::url('packages/'.$file) : null);
 
         $claimImgFile = Setting::get('claim_image');
         $claimImgSrc  = $claimImgFile
-            ? asset('images/' . $claimImgFile)
+            ? Media::url('branding/' . $claimImgFile)
             : asset('images/orderL.jpeg');
 
         return Inertia::render('Dashboard/Task', [

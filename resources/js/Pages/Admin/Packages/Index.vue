@@ -12,13 +12,6 @@ function money(value: string) {
     return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Package::imageUrl() is a plain model method (not an accessor/append), so it isn't
-// serialized in the Inertia JSON payload — replicate its `asset('images/packages/...')`
-// logic on the client instead.
-function imageUrl(pkg: Package) {
-    return `/images/packages/${pkg.image ?? ''}`;
-}
-
 // ── Add package form ──
 const addForm = useForm<{
     name: string;
@@ -237,7 +230,7 @@ function destroyPackage(pkg: Package) {
                     <template v-for="pkg in packages" :key="pkg.id">
                         <tr class="hover:bg-gray-50">
                             <td class="px-3 py-2">
-                                <img :src="imageUrl(pkg)" class="w-14 h-14 rounded-lg object-cover" alt="">
+                                <img v-if="pkg.image_url" :src="pkg.image_url" class="w-14 h-14 rounded-lg object-cover" alt="">
                             </td>
                             <td class="px-3 py-2 font-semibold text-green-700">{{ pkg.name }}</td>
                             <td class="px-3 py-2">Kes {{ money(pkg.amount) }}</td>

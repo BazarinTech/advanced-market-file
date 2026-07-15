@@ -4,23 +4,31 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Support\Media;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SettingsController extends Controller
 {
+    protected function brandingUrl(string $key): ?string
+    {
+        $filename = Setting::get($key);
+
+        return $filename ? Media::url('branding/'.$filename) : null;
+    }
+
     public function index()
     {
         return Inertia::render('Admin/Settings', [
             'withdrawal_min'       => Setting::get('withdrawal_min', 50),
             'withdrawal_fee'       => Setting::get('withdrawal_fee', 5),
-            'home_banner'          => Setting::get('home_banner'),
-            'claim_image'          => Setting::get('claim_image'),
+            'home_banner'          => $this->brandingUrl('home_banner'),
+            'claim_image'          => $this->brandingUrl('claim_image'),
             'link_whatsapp'        => Setting::get('link_whatsapp'),
             'link_telegram'        => Setting::get('link_telegram'),
             'link_customer_support'=> Setting::get('link_customer_support'),
             'link_download_app'    => Setting::get('link_download_app'),
-            'logo'                 => Setting::get('logo'),
+            'logo'                 => $this->brandingUrl('logo'),
             'usd_kes_rate'         => Setting::get('usd_kes_rate', 130),
             'crypto_deposit_address' => Setting::get('crypto_deposit_address'),
             'referral_level1_pct'  => Setting::get('referral_level1_pct', 10),
@@ -78,7 +86,7 @@ class SettingsController extends Controller
 
         $file     = $request->file('banner');
         $filename = 'banner-home.' . $file->getClientOriginalExtension();
-        $file->move(base_path('images'), $filename);
+        Media::put($file, 'branding', $filename);
 
         Setting::set('home_banner', $filename);
 
@@ -110,7 +118,7 @@ class SettingsController extends Controller
 
         $file     = $request->file('claim_image');
         $filename = 'claim-icon.' . $file->getClientOriginalExtension();
-        $file->move(base_path('images'), $filename);
+        Media::put($file, 'branding', $filename);
 
         Setting::set('claim_image', $filename);
 
@@ -125,7 +133,7 @@ class SettingsController extends Controller
 
         $file     = $request->file('logo');
         $filename = 'logo-mark.' . $file->getClientOriginalExtension();
-        $file->move(base_path('images'), $filename);
+        Media::put($file, 'branding', $filename);
 
         Setting::set('logo', $filename);
 

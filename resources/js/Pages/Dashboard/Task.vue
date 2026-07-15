@@ -56,8 +56,7 @@ const activeOrders = computed(() => props.orders.filter((o) => o.status === 'Act
 const completedOrders = computed(() => props.orders.filter((o) => o.status !== 'Active'));
 
 function packageImage(order: Order): string {
-    const file = props.packageImages[order.package];
-    return file ? `/images/packages/${file}` : '/images/8.jpeg';
+    return props.packageImages[order.package] ?? '/images/8.jpeg';
 }
 
 function progress(order: Order): number {

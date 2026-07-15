@@ -15,7 +15,7 @@ const iconClass = computed(() => (props.size === 'sm' ? 'text-primary-foreground
 <template>
     <img
         v-if="logo"
-        :src="`/images/${logo}`"
+        :src="logo"
         alt="Logo"
         data-no-skeleton
         class="object-contain shrink-0"

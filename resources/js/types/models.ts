@@ -51,6 +51,7 @@ export interface Package {
     daily: string;
     days: number;
     image: string | null;
+    image_url: string | null;
     active: boolean;
     tasks_per_day: number;
     task_category: string | null;
