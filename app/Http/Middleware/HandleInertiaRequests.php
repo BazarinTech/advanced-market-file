@@ -58,7 +58,7 @@ class HandleInertiaRequests extends Middleware
                 'success_crypto' => fn () => $request->session()->get('success_crypto'),
                 'success_referral' => fn () => $request->session()->get('success_referral'),
             ],
-            'platformLogo' => fn () => Setting::get('logo') ? Media::url('branding/'.Setting::get('logo')) : null,
+            'platformLogo' => fn () => Media::brandingUrl('logo'),
             'usdRate' => fn () => (float) Setting::get('usd_kes_rate', 130),
         ];
     }

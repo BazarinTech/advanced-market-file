@@ -7,7 +7,7 @@
 
     <title inertia>{{ config('app.name', 'Mythos Task') }}</title>
 
-    <link rel="shortcut icon" href="{{ asset('images/sofi.png') }}">
+    <link rel="shortcut icon" href="{{ \App\Support\Media::brandingUrl('logo') ?? asset('images/sofi.png') }}">
 
     @routes
     @vite(['resources/css/app.css', 'resources/js/app.ts'])

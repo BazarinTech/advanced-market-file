@@ -2,12 +2,24 @@
 
 namespace App\Support;
 
+use App\Models\Setting;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class Media
 {
+    /**
+     * Resolves a branding asset (logo, home banner, claim icon) stored as a
+     * bare filename under a Setting key into its bucket URL.
+     */
+    public static function brandingUrl(string $settingKey): ?string
+    {
+        $filename = Setting::get($settingKey);
+
+        return $filename ? self::url('branding/'.$filename) : null;
+    }
+
     /**
      * The bucket has no public-read access (Railway's Bucket dashboard offers no
      * such toggle), so every URL must be a signed, time-limited request instead

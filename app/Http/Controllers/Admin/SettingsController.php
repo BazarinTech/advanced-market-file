@@ -12,9 +12,7 @@ class SettingsController extends Controller
 {
     protected function brandingUrl(string $key): ?string
     {
-        $filename = Setting::get($key);
-
-        return $filename ? Media::url('branding/'.$filename) : null;
+        return Media::brandingUrl($key);
     }
 
     public function index()
