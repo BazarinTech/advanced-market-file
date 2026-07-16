@@ -99,7 +99,7 @@ function buy(pkg: Package) {
                                 <Icon name="bolt" class="text-primary" />
                                 {{ pkg.tasks_per_day }} task{{ pkg.tasks_per_day === 1 ? '' : 's' }}/day
                             </span>
-                            <span v-if="pkg.task_category">· {{ pkg.task_category }} questions</span>
+                            <span v-if="pkg.task_category">· {{ pkg.task_category }} Tasks</span>
                         </div>
                         <button
                             type="submit"
