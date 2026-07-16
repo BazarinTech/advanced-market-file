@@ -33,24 +33,6 @@ class SmsService
         return $digits;
     }
 
-    /**
-     * Whether the given phone number falls in a known Safaricom number
-     * range. Only Safaricom numbers are accepted for registration since
-     * SMS delivery and M-Pesa STK push both depend on it.
-     */
-    public function isSafaricomNumber(string $phone): bool
-    {
-        $sanitized = $this->sanitizePhone($phone);
-
-        if (! str_starts_with($sanitized, '254') || strlen($sanitized) !== 12) {
-            return false;
-        }
-
-        $local = substr($sanitized, 3);
-
-        return (bool) preg_match('/^(7[0124]\d{7}|11[0-5]\d{6})$/', $local);
-    }
-
     protected function generateCode(): string
     {
         return (string) random_int(100000, 999999);

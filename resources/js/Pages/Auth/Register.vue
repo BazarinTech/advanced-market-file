@@ -44,7 +44,7 @@ function submit() {
                     >
                 </div>
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Phone Number (Safaricom only)</label>
+                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Phone Number</label>
                     <input
                         v-model="form.phone"
                         type="text"
@@ -53,7 +53,7 @@ function submit() {
                         required
                     >
                     <p class="text-muted-foreground/70 text-[10px] mt-1">
-                        Only Safaricom numbers are supported — you'll receive an SMS code to verify it.
+                        You'll receive an SMS code to verify it.
                     </p>
                 </div>
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">

@@ -80,14 +80,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email'    => 'required|email|unique:users,email',
-            'phone'    => [
-                'required', 'string', 'max:20', 'unique:users,phone',
-                function ($attribute, $value, $fail) use ($sms) {
-                    if (! $sms->isSafaricomNumber($value)) {
-                        $fail('Only Safaricom phone numbers are accepted (SMS verification requires it).');
-                    }
-                },
-            ],
+            'phone'    => 'required|string|max:20|unique:users,phone',
             'country'  => 'required|string',
             'ref'      => ['required', 'string', 'size:6', Rule::exists('users', 'invite_code')],
             'password' => 'required|min:8|confirmed',
