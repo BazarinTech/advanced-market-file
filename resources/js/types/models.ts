@@ -53,6 +53,7 @@ export interface Package {
     image: string | null;
     image_url: string | null;
     active: boolean;
+    one_time_only: boolean;
     tasks_per_day: number;
     task_category: string | null;
 }

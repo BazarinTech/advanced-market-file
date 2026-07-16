@@ -53,10 +53,18 @@ class DashboardController extends Controller
 
     public function packages()
     {
+        $user     = Auth::user();
         $packages = Package::where('active', true)->orderBy('amount')->get();
 
+        $claimedOneTimePackages = Order::where('email', $user->email)
+            ->whereIn('package', $packages->where('one_time_only', true)->pluck('name'))
+            ->pluck('package')
+            ->unique()
+            ->values();
+
         return Inertia::render('Dashboard/Packages', [
-            'packages' => $packages,
+            'packages'               => $packages,
+            'claimedOneTimePackages' => $claimedOneTimePackages,
         ]);
     }
 
@@ -67,6 +75,10 @@ class DashboardController extends Controller
         $user     = Auth::user();
         $earnings = $user->earnings;
         $pkg      = Package::where('id', $request->package)->where('active', true)->firstOrFail();
+
+        if ($pkg->one_time_only && Order::where('email', $user->email)->where('package', $pkg->name)->exists()) {
+            return back()->with('error', 'You have already claimed this task plan.');
+        }
 
         if ($earnings->balance < $pkg->amount) {
             return back()->with('error', 'Insufficient balance. Please top up your account.');

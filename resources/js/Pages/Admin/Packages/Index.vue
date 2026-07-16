@@ -20,6 +20,7 @@ const addForm = useForm<{
     days: string;
     image: File | null;
     active: boolean;
+    one_time_only: boolean;
     tasks_per_day: string;
     task_category: string;
 }>({
@@ -29,6 +30,7 @@ const addForm = useForm<{
     days: '',
     image: null,
     active: true,
+    one_time_only: false,
     tasks_per_day: '1',
     task_category: '',
 });
@@ -60,6 +62,7 @@ function makeEditForm(pkg: Package) {
         days: number;
         image: File | null;
         active: boolean;
+        one_time_only: boolean;
         tasks_per_day: number;
         task_category: string;
     }>({
@@ -69,6 +72,7 @@ function makeEditForm(pkg: Package) {
         days: pkg.days,
         image: null,
         active: pkg.active,
+        one_time_only: pkg.one_time_only,
         tasks_per_day: pkg.tasks_per_day,
         task_category: pkg.task_category ?? '',
     });
@@ -129,7 +133,8 @@ function destroyPackage(pkg: Package) {
                         v-model="addForm.amount"
                         type="number"
                         step="0.01"
-                        placeholder="e.g. 500"
+                        min="0"
+                        placeholder="e.g. 500, or 0 for a free package"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
                         required
                     >
@@ -199,6 +204,10 @@ function destroyPackage(pkg: Package) {
                         <input v-model="addForm.active" type="checkbox" class="w-4 h-4 accent-green-600">
                         Active
                     </label>
+                    <label class="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                        <input v-model="addForm.one_time_only" type="checkbox" class="w-4 h-4 accent-purple-600">
+                        One-time claim only
+                    </label>
                     <button
                         type="submit"
                         :disabled="addForm.processing"
@@ -240,12 +249,20 @@ function destroyPackage(pkg: Package) {
                             <td class="px-3 py-2">{{ pkg.tasks_per_day }}</td>
                             <td class="px-3 py-2 text-gray-500">{{ pkg.task_category || 'General' }}</td>
                             <td class="px-3 py-2">
-                                <span
-                                    class="px-2 py-0.5 rounded-full text-xs font-semibold"
-                                    :class="pkg.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'"
-                                >
-                                    {{ pkg.active ? 'Active' : 'Inactive' }}
-                                </span>
+                                <div class="flex flex-col gap-1 items-start">
+                                    <span
+                                        class="px-2 py-0.5 rounded-full text-xs font-semibold"
+                                        :class="pkg.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'"
+                                    >
+                                        {{ pkg.active ? 'Active' : 'Inactive' }}
+                                    </span>
+                                    <span
+                                        v-if="pkg.one_time_only"
+                                        class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700"
+                                    >
+                                        One-Time
+                                    </span>
+                                </div>
                             </td>
                             <td class="px-3 py-2 flex gap-2 flex-wrap">
                                 <button
@@ -280,6 +297,7 @@ function destroyPackage(pkg: Package) {
                                             v-model="editForm(pkg).amount"
                                             type="number"
                                             step="0.01"
+                                            min="0"
                                             class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm outline-none"
                                             required
                                         >
@@ -337,6 +355,10 @@ function destroyPackage(pkg: Package) {
                                         <label class="flex items-center gap-1 text-sm text-gray-600">
                                             <input v-model="editForm(pkg).active" type="checkbox" class="accent-green-600">
                                             Active
+                                        </label>
+                                        <label class="flex items-center gap-1 text-sm text-gray-600">
+                                            <input v-model="editForm(pkg).one_time_only" type="checkbox" class="accent-purple-600">
+                                            One-time only
                                         </label>
                                         <button
                                             type="submit"

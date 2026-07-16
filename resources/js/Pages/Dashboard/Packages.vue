@@ -8,6 +8,7 @@ import type { Package } from '@/types/models';
 
 const props = defineProps<{
     packages: Package[];
+    claimedOneTimePackages: string[];
 }>();
 
 const page = usePage();
@@ -26,10 +27,15 @@ function canAfford(pkg: Package): boolean {
     return balance >= Number(pkg.amount);
 }
 
+function alreadyClaimed(pkg: Package): boolean {
+    return pkg.one_time_only && props.claimedOneTimePackages.includes(pkg.name);
+}
+
 // One independent form per package card.
 const forms = Object.fromEntries(props.packages.map((pkg) => [pkg.id, useForm({ package: pkg.id })]));
 
 function buy(pkg: Package) {
+    if (alreadyClaimed(pkg)) return;
     if (!canAfford(pkg)) {
         toast.error('Insufficient balance. Please recharge your account to start this task.');
         return;
@@ -97,10 +103,15 @@ function buy(pkg: Package) {
                         </div>
                         <button
                             type="submit"
-                            :disabled="forms[pkg.id].processing"
-                            class="w-full py-3 rounded-2xl text-xs font-semibold tracking-widest uppercase transition-opacity text-primary-foreground bg-primary hover:bg-amber-700 disabled:opacity-70 disabled:cursor-not-allowed"
+                            :disabled="forms[pkg.id].processing || alreadyClaimed(pkg)"
+                            class="w-full py-3 rounded-2xl text-xs font-semibold tracking-widest uppercase transition-opacity disabled:cursor-not-allowed"
+                            :class="
+                                alreadyClaimed(pkg)
+                                    ? 'text-muted-foreground bg-secondary'
+                                    : 'text-primary-foreground bg-primary hover:bg-amber-700 disabled:opacity-70'
+                            "
                         >
-                            {{ forms[pkg.id].processing ? 'Processing…' : 'Start Task' }}
+                            {{ alreadyClaimed(pkg) ? 'Already Claimed' : forms[pkg.id].processing ? 'Processing…' : 'Start Task' }}
                         </button>
                     </div>
                 </div>

@@ -20,16 +20,18 @@ class PackageController extends Controller
     {
         $data = $request->validate([
             'name'          => 'required|string|max:100',
-            'amount'        => 'required|numeric|min:1',
-            'daily'         => 'required|numeric|min:1',
+            'amount'        => 'required|numeric|min:0',
+            'daily'         => 'required|numeric|min:0',
             'days'          => 'required|integer|min:1',
             'image'         => 'nullable|image|max:2048',
             'active'        => 'nullable|boolean',
+            'one_time_only' => 'nullable|boolean',
             'tasks_per_day' => 'required|integer|min:1|max:20',
             'task_category' => 'nullable|string|max:100',
         ]);
 
-        $data['active'] = $request->has('active') ? 1 : 0;
+        $data['active']        = $request->has('active') ? 1 : 0;
+        $data['one_time_only'] = $request->has('one_time_only') ? 1 : 0;
 
         if ($request->hasFile('image')) {
             $file     = $request->file('image');
@@ -46,16 +48,18 @@ class PackageController extends Controller
     {
         $data = $request->validate([
             'name'          => 'required|string|max:100',
-            'amount'        => 'required|numeric|min:1',
-            'daily'         => 'required|numeric|min:1',
+            'amount'        => 'required|numeric|min:0',
+            'daily'         => 'required|numeric|min:0',
             'days'          => 'required|integer|min:1',
             'image'         => 'nullable|image|max:2048',
             'active'        => 'nullable|boolean',
+            'one_time_only' => 'nullable|boolean',
             'tasks_per_day' => 'required|integer|min:1|max:20',
             'task_category' => 'nullable|string|max:100',
         ]);
 
-        $data['active'] = $request->has('active') ? 1 : 0;
+        $data['active']        = $request->has('active') ? 1 : 0;
+        $data['one_time_only'] = $request->has('one_time_only') ? 1 : 0;
 
         if ($request->hasFile('image')) {
             Media::delete('packages', $package->image);
