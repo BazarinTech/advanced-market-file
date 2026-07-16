@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import type { Package } from '@/types/models';
 
@@ -10,6 +10,19 @@ defineProps<{
 
 function money(value: string) {
     return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// The admin panel always shows raw KES (source of truth), but since users see
+// USD everywhere, show a live "≈ $X" conversion using the same admin-set rate
+// (Settings > USD Exchange Rate) so what's typed here maps directly to what a
+// user actually sees, without needing to jump to the Settings page to check.
+const rate = computed(() => Number(usePage().props.usdRate ?? 1) || 1);
+
+function usdPreview(kesValue: string | number): string {
+    if (kesValue === '' || kesValue === null || kesValue === undefined) return '';
+    const n = Number(kesValue);
+    if (Number.isNaN(n)) return '';
+    return (n / rate.value).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
 
 // ── Add package form ──
@@ -138,6 +151,7 @@ function destroyPackage(pkg: Package) {
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
                         required
                     >
+                    <p v-if="usdPreview(addForm.amount)" class="text-xs text-gray-400 mt-1">≈ {{ usdPreview(addForm.amount) }} to users</p>
                     <p v-if="addForm.errors.amount" class="text-xs text-red-500 mt-1">{{ addForm.errors.amount }}</p>
                 </div>
                 <div>
@@ -150,6 +164,7 @@ function destroyPackage(pkg: Package) {
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
                         required
                     >
+                    <p v-if="usdPreview(addForm.daily)" class="text-xs text-gray-400 mt-1">≈ {{ usdPreview(addForm.daily) }} to users</p>
                     <p v-if="addForm.errors.daily" class="text-xs text-red-500 mt-1">{{ addForm.errors.daily }}</p>
                 </div>
                 <div>
@@ -242,10 +257,19 @@ function destroyPackage(pkg: Package) {
                                 <img v-if="pkg.image_url" :src="pkg.image_url" class="w-14 h-14 rounded-lg object-cover" alt="">
                             </td>
                             <td class="px-3 py-2 font-semibold text-green-700">{{ pkg.name }}</td>
-                            <td class="px-3 py-2">Kes {{ money(pkg.amount) }}</td>
-                            <td class="px-3 py-2">Kes {{ money(pkg.daily) }}</td>
+                            <td class="px-3 py-2">
+                                Kes {{ money(pkg.amount) }}
+                                <span class="block text-xs text-gray-400">≈ {{ usdPreview(pkg.amount) }}</span>
+                            </td>
+                            <td class="px-3 py-2">
+                                Kes {{ money(pkg.daily) }}
+                                <span class="block text-xs text-gray-400">≈ {{ usdPreview(pkg.daily) }}</span>
+                            </td>
                             <td class="px-3 py-2">{{ pkg.days }} days</td>
-                            <td class="px-3 py-2">Kes {{ money(String(Number(pkg.daily) * pkg.days)) }}</td>
+                            <td class="px-3 py-2">
+                                Kes {{ money(String(Number(pkg.daily) * pkg.days)) }}
+                                <span class="block text-xs text-gray-400">≈ {{ usdPreview(Number(pkg.daily) * pkg.days) }}</span>
+                            </td>
                             <td class="px-3 py-2">{{ pkg.tasks_per_day }}</td>
                             <td class="px-3 py-2 text-gray-500">{{ pkg.task_category || 'General' }}</td>
                             <td class="px-3 py-2">
@@ -301,6 +325,7 @@ function destroyPackage(pkg: Package) {
                                             class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm outline-none"
                                             required
                                         >
+                                        <p v-if="usdPreview(editForm(pkg).amount)" class="text-xs text-gray-400 mt-0.5">≈ {{ usdPreview(editForm(pkg).amount) }}</p>
                                     </div>
                                     <div>
                                         <label class="text-xs text-gray-500">Daily (Kes)</label>
@@ -311,6 +336,7 @@ function destroyPackage(pkg: Package) {
                                             class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm outline-none"
                                             required
                                         >
+                                        <p v-if="usdPreview(editForm(pkg).daily)" class="text-xs text-gray-400 mt-0.5">≈ {{ usdPreview(editForm(pkg).daily) }}</p>
                                     </div>
                                     <div>
                                         <label class="text-xs text-gray-500">Cycle (days)</label>
