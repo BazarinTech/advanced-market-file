@@ -44,16 +44,16 @@ function submit() {
                     >
                 </div>
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">
-                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Phone Number</label>
+                    <label class="text-muted-foreground text-[9px] tracking-[0.3em] uppercase block mb-1">Phone Number (Safaricom only)</label>
                     <input
                         v-model="form.phone"
                         type="text"
-                        placeholder="07XXXXXXXX"
+                        placeholder="07XXXXXXXX or 01XXXXXXXX"
                         class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                         required
                     >
                     <p class="text-muted-foreground/70 text-[10px] mt-1">
-                        You'll receive an SMS code to verify it.
+                        Please use a Safaricom number — you'll receive an SMS code to verify it.
                     </p>
                 </div>
                 <div class="rounded-2xl px-4 py-3 bg-card border border-border">

@@ -80,11 +80,12 @@ class AuthController extends Controller
     {
         $request->validate([
             'email'    => 'required|email|unique:users,email',
-            'phone'    => 'required|string|max:20|unique:users,phone',
+            'phone'    => 'required|string|size:10|unique:users,phone',
             'country'  => 'required|string',
             'ref'      => ['required', 'string', 'size:6', Rule::exists('users', 'invite_code')],
             'password' => 'required|min:8|confirmed',
         ], [
+            'phone.size' => 'Phone number must be 10 digits (e.g. 0712345678).',
             'ref.exists' => 'Invalid referral code.',
         ]);
 
