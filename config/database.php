@@ -59,6 +59,13 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // Forces the MySQL session (not just PHP) onto EAT so that columns
+            // relying on MySQL's own DEFAULT CURRENT_TIMESTAMP (e.g. users.date)
+            // match app.timezone, regardless of the DB server's own OS clock —
+            // otherwise a MySQL host running on UTC (the norm for Docker/managed
+            // MySQL, e.g. Railway) silently stores those columns ~3 hours behind
+            // everything the app computes explicitly via now()/Carbon.
+            'timezone' => env('DB_TIMEZONE', '+03:00'),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
