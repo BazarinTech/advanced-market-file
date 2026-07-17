@@ -6,6 +6,7 @@ import Icon from '@/components/Icon.vue';
 const props = defineProps<{
     withdrawal_min: number;
     withdrawal_fee: number;
+    deposit_min: number;
     home_banner: string | null;
     claim_image: string | null;
     link_whatsapp: string | null;
@@ -41,6 +42,7 @@ function submitLogo() {
 const withdrawalForm = useForm({
     withdrawal_min: props.withdrawal_min,
     withdrawal_fee: props.withdrawal_fee,
+    deposit_min: props.deposit_min,
     usd_kes_rate: props.usd_kes_rate,
 });
 
@@ -166,11 +168,11 @@ function submitLinks() {
                 </form>
             </div>
 
-            <!-- Section 1: Withdrawal Settings -->
+            <!-- Section 1: Withdrawal & Deposit Settings -->
             <div class="bg-white rounded-xl shadow p-6">
                 <div class="flex items-center gap-2 mb-5 pb-3 border-b border-gray-100">
                     <div class="w-1 h-5 bg-blue-600 rounded"></div>
-                    <h2 class="text-base font-semibold text-gray-700">Withdrawal Settings</h2>
+                    <h2 class="text-base font-semibold text-gray-700">Withdrawal &amp; Deposit Settings</h2>
                 </div>
 
                 <form class="flex flex-col gap-5" @submit.prevent="submitWithdrawal">
@@ -201,6 +203,20 @@ function submitLinks() {
                         >
                         <p class="text-xs text-gray-400 mt-1">Percentage deducted from every withdrawal. E.g. <strong>5</strong> = 5%.</p>
                         <p v-if="withdrawalForm.errors.withdrawal_fee" class="text-xs text-red-500 mt-1">{{ withdrawalForm.errors.withdrawal_fee }}</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Minimum Deposit Amount (USD)</label>
+                        <input
+                            v-model.number="withdrawalForm.deposit_min"
+                            type="number"
+                            min="0.01"
+                            step="0.01"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                            required
+                        >
+                        <p class="text-xs text-gray-400 mt-1">Users cannot deposit less than this amount. Entered in USD since that's the currency they see.</p>
+                        <p v-if="withdrawalForm.errors.deposit_min" class="text-xs text-red-500 mt-1">{{ withdrawalForm.errors.deposit_min }}</p>
                     </div>
 
                     <div>

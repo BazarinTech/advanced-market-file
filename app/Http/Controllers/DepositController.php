@@ -18,14 +18,17 @@ class DepositController extends Controller
     {
         return Inertia::render('Dashboard/Deposit', [
             'cryptoAddress' => Setting::get('crypto_deposit_address'),
+            'depositMin'    => (float) Setting::get('deposit_min', 1),
         ]);
     }
 
     public function store(Request $request)
     {
+        $minAmount = (float) Setting::get('deposit_min', 1);
+
         $request->validate([
             'method' => 'required|in:mpesa,crypto',
-            'amount' => 'required|numeric|min:1',
+            'amount' => "required|numeric|min:{$minAmount}",
             'phone'  => 'required_if:method,mpesa|nullable|string|max:20',
         ]);
 

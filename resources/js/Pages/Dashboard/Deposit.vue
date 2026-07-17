@@ -9,6 +9,7 @@ import { useCurrency } from '@/composables/useCurrency';
 
 const props = defineProps<{
     cryptoAddress: string | null;
+    depositMin: number;
 }>();
 
 const page = usePage();
@@ -104,6 +105,7 @@ async function copyAddress() {
                             <p class="text-muted-foreground text-xs">Enter amount (USD) and phone number</p>
                             <p class="text-muted-foreground text-xs">Click submit — you will receive an M-Pesa STK pop-up</p>
                             <p class="text-muted-foreground text-xs">Enter your PIN and balance updates automatically</p>
+                            <p class="text-muted-foreground text-xs">Minimum deposit: ${{ depositMin.toFixed(2) }}</p>
                         </div>
                     </div>
 
@@ -115,7 +117,7 @@ async function copyAddress() {
                                     v-model="form.amount"
                                     type="number"
                                     step="0.01"
-                                    min="1"
+                                    :min="depositMin"
                                     placeholder="e.g. 10"
                                     class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                                     required
@@ -151,6 +153,7 @@ async function copyAddress() {
                             <p class="text-muted-foreground text-xs">Send USDT (TRC20 network only) to the address below</p>
                             <p class="text-muted-foreground text-xs">Then submit the amount you sent</p>
                             <p class="text-muted-foreground text-xs">Your deposit will be reviewed and approved within ~30 minutes</p>
+                            <p class="text-muted-foreground text-xs">Minimum deposit: ${{ depositMin.toFixed(2) }}</p>
                         </div>
                     </div>
 
@@ -186,7 +189,7 @@ async function copyAddress() {
                                     v-model="form.amount"
                                     type="number"
                                     step="0.01"
-                                    min="1"
+                                    :min="depositMin"
                                     placeholder="e.g. 10"
                                     class="w-full bg-transparent outline-none text-sm text-foreground placeholder-muted-foreground/60"
                                     required

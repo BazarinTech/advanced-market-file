@@ -20,6 +20,7 @@ class SettingsController extends Controller
         return Inertia::render('Admin/Settings', [
             'withdrawal_min'       => Setting::get('withdrawal_min', 50),
             'withdrawal_fee'       => Setting::get('withdrawal_fee', 5),
+            'deposit_min'          => Setting::get('deposit_min', 1),
             'home_banner'          => $this->brandingUrl('home_banner'),
             'claim_image'          => $this->brandingUrl('claim_image'),
             'link_whatsapp'        => Setting::get('link_whatsapp'),
@@ -55,11 +56,13 @@ class SettingsController extends Controller
         $request->validate([
             'withdrawal_min' => 'required|numeric|min:1',
             'withdrawal_fee' => 'required|numeric|min:0|max:100',
+            'deposit_min'    => 'required|numeric|min:0.01',
             'usd_kes_rate'   => 'required|numeric|min:1',
         ]);
 
         Setting::set('withdrawal_min', $request->withdrawal_min);
         Setting::set('withdrawal_fee', $request->withdrawal_fee);
+        Setting::set('deposit_min', $request->deposit_min);
         Setting::set('usd_kes_rate', $request->usd_kes_rate);
 
         return back()->with('success_withdrawal', 'Withdrawal settings saved.');
