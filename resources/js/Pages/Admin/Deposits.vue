@@ -119,7 +119,7 @@ function reject(id: number) {
                         <td class="px-3 py-2">{{ d.phone }}</td>
                         <td class="px-3 py-2 text-xs text-gray-500">{{ d.date }}</td>
                         <td class="px-3 py-2 flex flex-wrap gap-1">
-                            <template v-if="d.status === 'Pending' && d.method === 'crypto'">
+                            <template v-if="d.status === 'Pending'">
                                 <button class="px-2 py-1 rounded text-xs text-white bg-green-600 hover:bg-green-700" @click="approve(d.ID)">
                                     Approve
                                 </button>

@@ -25,7 +25,7 @@ class TransactionController extends Controller
     {
         $tx = \App\Models\Transaction::findOrFail($id);
 
-        abort_unless($tx->status === 'Pending' && $tx->method === 'crypto', 400);
+        abort_unless($tx->status === 'Pending', 400);
 
         $earnings = \App\Models\Earning::where('email', $tx->email)->firstOrFail();
         $earnings->balance += $tx->amount;
@@ -39,19 +39,19 @@ class TransactionController extends Controller
 
         $this->referralService->payCommission($tx->email, (float) $tx->amount);
 
-        return back()->with('success', 'Crypto deposit approved and credited.');
+        return back()->with('success', 'Deposit approved and credited.');
     }
 
     public function rejectDeposit(Request $request, $id)
     {
         $tx = \App\Models\Transaction::findOrFail($id);
 
-        abort_unless($tx->status === 'Pending' && $tx->method === 'crypto', 400);
+        abort_unless($tx->status === 'Pending', 400);
 
         $tx->status = 'Rejected';
         $tx->save();
 
-        return back()->with('success', 'Crypto deposit rejected.');
+        return back()->with('success', 'Deposit rejected.');
     }
 
     public function manualDeposit(Request $request)
