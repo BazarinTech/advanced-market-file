@@ -12,6 +12,7 @@ const props = defineProps<{
     accounts: { mpesa: WithdrawalAccount | null; crypto: WithdrawalAccount | null };
     withdrawal_min: number;
     withdrawal_fee: number;
+    eligibleToWithdraw: boolean;
 }>();
 
 const page = usePage();
@@ -266,6 +267,17 @@ const minUsd = computed(() => toUsd(props.withdrawal_min).toFixed(2));
                             </div>
                         </div>
 
+                        <!-- Withdrawal locked notice -->
+                        <div v-if="!eligibleToWithdraw" class="rounded-2xl px-4 py-3 flex items-start gap-3 bg-card border border-border">
+                            <Icon name="triangle-exclamation" class="text-warning mt-0.5 text-sm shrink-0" />
+                            <div class="space-y-1">
+                                <p class="text-foreground text-xs tracking-widest uppercase font-light">Withdrawal Locked</p>
+                                <p class="text-muted-foreground text-xs tracking-wide">
+                                    Make a deposit, or refer someone who deposits, to unlock withdrawals.
+                                </p>
+                            </div>
+                        </div>
+
                         <!-- Withdrawal form -->
                         <div class="rounded-2xl p-5 bg-card border border-border">
                             <form class="flex flex-col gap-4" @submit.prevent="submitWithdraw">
@@ -294,7 +306,7 @@ const minUsd = computed(() => toUsd(props.withdrawal_min).toFixed(2));
                                 </p>
                                 <button
                                     type="submit"
-                                    :disabled="withdrawForm.processing"
+                                    :disabled="withdrawForm.processing || !eligibleToWithdraw"
                                     class="w-full bg-primary hover:bg-amber-700 text-primary-foreground font-bold py-3.5 rounded-2xl tracking-widest uppercase text-xs flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
                                 >
                                     {{ withdrawForm.processing ? 'Processing…' : 'Withdraw' }}

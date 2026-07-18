@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Earning;
 use App\Models\Setting;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\WithdrawalAccount;
 use App\Services\PalplussService;
 use Illuminate\Http\Request;
@@ -20,13 +22,40 @@ class WithdrawController extends Controller
         $accounts = WithdrawalAccount::where('email', $user->email)->get()->keyBy('method');
 
         return Inertia::render('Dashboard/Withdraw', [
-            'accounts'       => [
+            'accounts'           => [
                 'mpesa'  => $accounts->get('mpesa'),
                 'crypto' => $accounts->get('crypto'),
             ],
-            'withdrawal_min' => (float) Setting::get('withdrawal_min', 50),
-            'withdrawal_fee' => (float) Setting::get('withdrawal_fee', 5),
+            'withdrawal_min'     => (float) Setting::get('withdrawal_min', 50),
+            'withdrawal_fee'     => (float) Setting::get('withdrawal_fee', 5),
+            'eligibleToWithdraw' => $this->isEligibleToWithdraw($user),
         ]);
+    }
+
+    /**
+     * A user may withdraw once they've made a deposit themselves, or once at
+     * least one member of their downline (any of the 3 referral levels) has —
+     * blocks withdrawing task earnings on an account that never funded the
+     * platform, directly or via a referral.
+     */
+    private function isEligibleToWithdraw(User $user): bool
+    {
+        if ((float) ($user->earnings->deposit ?? 0) > 0) {
+            return true;
+        }
+
+        $level1 = User::where('refer', $user->ID)->pluck('ID');
+        $level2 = $level1->isEmpty() ? collect() : User::whereIn('refer', $level1)->pluck('ID');
+        $level3 = $level2->isEmpty() ? collect() : User::whereIn('refer', $level2)->pluck('ID');
+        $downlineIds = $level1->concat($level2)->concat($level3);
+
+        if ($downlineIds->isEmpty()) {
+            return false;
+        }
+
+        $downlineEmails = User::whereIn('ID', $downlineIds)->pluck('email');
+
+        return Earning::whereIn('email', $downlineEmails)->where('deposit', '>', 0)->exists();
     }
 
     public function store(Request $request)
@@ -46,6 +75,10 @@ class WithdrawController extends Controller
 
         if (!$account) {
             return back()->with('error', 'Please set up your withdrawal account first.');
+        }
+
+        if (!$this->isEligibleToWithdraw($user)) {
+            return back()->with('error', 'You need to make a deposit, or have a referral who has deposited, before you can withdraw.');
         }
 
         $earnings = $user->earnings;
