@@ -51,9 +51,21 @@ class WithdrawController extends Controller
         $earnings = $user->earnings;
         $usd      = (float) $request->amount;
         $amount   = round($usd * $rate, 2);
+        $balance  = (float) $earnings->balance;
 
-        if ($amount > $earnings->balance) {
-            return back()->with('error', 'Insufficient balance to process this withdrawal request.');
+        if ($amount > $balance) {
+            // The USD amount shown/entered is itself a rounded (to the nearest
+            // cent) conversion of the real KES balance, so converting it back to
+            // KES can overshoot the true balance by up to half a cent's worth of
+            // KES — most commonly when withdrawing (at or near) the full balance
+            // or the minimum. Clamp rather than falsely reject if the overshoot
+            // is just that rounding noise (a full cent's worth of KES, for a
+            // comfortable margin either way the rate is set).
+            if ($amount - $balance <= $rate * 0.01) {
+                $amount = $balance;
+            } else {
+                return back()->with('error', 'Insufficient balance to process this withdrawal request.');
+            }
         }
 
         $fee       = $amount * ($feePercent / 100);
