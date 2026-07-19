@@ -2,6 +2,7 @@
 import { Head, router } from '@inertiajs/vue3';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import Pagination from '@/components/Pagination.vue';
+import { formatDateTime } from '@/lib/utils';
 import type { PaginatedResponse, Transaction } from '@/types/models';
 
 defineProps<{
@@ -55,7 +56,7 @@ function reject(id: number) {
                         <td class="px-3 py-2 font-semibold" :class="['Success', 'Approved'].includes(w.status) ? 'text-green-600' : 'text-red-500'">
                             {{ w.status }}
                         </td>
-                        <td class="px-3 py-2 text-xs text-gray-500">{{ w.date }}</td>
+                        <td class="px-3 py-2 text-xs text-gray-500">{{ formatDateTime(w.date) }}</td>
                         <td class="px-3 py-2 flex flex-wrap gap-1">
                             <template v-if="w.status === 'Pending'">
                                 <button class="px-2 py-1 rounded text-xs text-white bg-green-600 hover:bg-green-700" @click="approve(w.ID)">

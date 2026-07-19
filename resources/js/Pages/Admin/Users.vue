@@ -4,6 +4,7 @@ import { Head, router, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import Pagination from '@/components/Pagination.vue';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { formatDateTime } from '@/lib/utils';
 import type { PaginatedResponse, User } from '@/types/models';
 
 const props = defineProps<{
@@ -105,7 +106,7 @@ function submitReset() {
                         </td>
                         <td class="px-3 py-2 font-semibold" :class="u.status === 'Active' ? 'text-green-600' : 'text-red-500'">{{ u.status }}</td>
                         <td class="px-3 py-2">{{ u.role }}</td>
-                        <td class="px-3 py-2 text-xs text-gray-500">{{ u.date }}</td>
+                        <td class="px-3 py-2 text-xs text-gray-500">{{ formatDateTime(u.date) }}</td>
                         <td class="px-3 py-2 flex flex-wrap gap-1">
                             <button
                                 class="px-2 py-1 rounded text-xs text-white"

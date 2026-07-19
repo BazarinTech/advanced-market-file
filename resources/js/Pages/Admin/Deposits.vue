@@ -2,6 +2,7 @@
 import { Head, router, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import Pagination from '@/components/Pagination.vue';
+import { formatDateTime } from '@/lib/utils';
 import type { PaginatedResponse, Transaction } from '@/types/models';
 
 defineProps<{
@@ -117,7 +118,7 @@ function reject(id: number) {
                         <td class="px-3 py-2">Kes {{ Number(d.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</td>
                         <td class="px-3 py-2 font-semibold" :class="d.status === 'Success' ? 'text-green-600' : d.status === 'Pending' ? 'text-amber-500' : 'text-red-500'">{{ d.status }}</td>
                         <td class="px-3 py-2">{{ d.phone }}</td>
-                        <td class="px-3 py-2 text-xs text-gray-500">{{ d.date }}</td>
+                        <td class="px-3 py-2 text-xs text-gray-500">{{ formatDateTime(d.date) }}</td>
                         <td class="px-3 py-2 flex flex-wrap gap-1">
                             <template v-if="d.status === 'Pending'">
                                 <button class="px-2 py-1 rounded text-xs text-white bg-green-600 hover:bg-green-700" @click="approve(d.ID)">
